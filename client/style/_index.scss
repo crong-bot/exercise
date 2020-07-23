@@ -1,0 +1,40 @@
+
+@mixin center-children {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+
+.main-layout{
+    display: grid; 
+    height: 100%;
+    width: 100vw;
+    background-color: white;
+    grid-template-rows: 1fr 1fr; 
+    
+}
+.login-5{
+       
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;          
+}
+
+.join-container{
+    background-color: yellow;
+    padding: 30px;
+    align-items: center;
+    justify-content: center; 
+} 
+.join-header{
+    @include center-children();
+}
+.join-main{
+    @include center-children();
+}
+
+   
+
+
+

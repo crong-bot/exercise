@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<link
+			rel="stylesheet"			
+			crossorigin="anonymous"
+		/>
+		<link rel="stylesheet" href="style/style.css" />
+		<title>ChatCord App</title>
+	</head>
+	<body>
+		<div class=main-layout>
+			<div class="login-5">
+				<svg class="egg5" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="300" height="300" viewBox="0 0 94 99">
+				<defs>
+					<path id="a" d="M43 91c23.748 0 43-6.023 43-33.61 0-23.77-16.51-42.501-35.718-48.095-1.557-.453-1.337-5.57-2.947-5.78-1.581-.204-2.707 3.923-4.335 3.923-1.862 0-.455-7.698-2.254-7.431-3.618.536-5.927 7.395-9.363 9.288C14.727 18.473 0 36.313 0 57.39 0 84.977 19.252 91 43 91z"/>
+				</defs>
+				<g fill="none" fill-rule="evenodd" transform="translate(4 4)">
+					<mask id="b" fill="#fff">
+						<use xlink:href="#a"/>
+					</mask>
+					<path stroke="#503932" stroke-width="4" d="M43.863 3.793c1.253-1.79 2.066-2.476 3.728-2.26 1.247.16 2 .973 2.507 2.13.256.584.4 1.083.686 2.226l.011.044c.219.874.327 1.253.457 1.564C72.303 13.828 88 34.062 88 57.39c0 13.732-4.622 23.172-13.52 28.837C66.959 91.016 56.706 93 43 93s-23.959-1.984-31.48-6.773C2.622 80.562-2 71.122-2 57.39c0-20.262 13.336-39.333 32.418-49.846.894-.493 1.72-1.446 3.426-3.832l.2-.28c2.605-3.64 4-5.047 6.409-5.404 1.818-.27 2.722.93 3.09 2.57.16.714.216 1.345.3 2.858l.009.15.01.187z"/>
+					<path fill="#FFFC27" d="M-16.324-4.39H94.759v107.364H-16.324z" mask="url(#b)"/>
+					<path fill="#DEDC31" d="M77.838 28.936c4.91 18.094 5.574 31.93 1.99 41.51-3.583 9.578-11.877 17.494-24.884 23.747 7.871-1.515 13.383-3.294 16.537-5.337C79.9 83.4 87.563 71.084 86.995 61.565c-.887-14.868-3.94-25.744-9.157-32.629z" mask="url(#b)"/>
+					<ellipse cx="61.713" cy="47.096" fill="#503932" stroke="#503932" stroke-width=".5" rx="3.981" ry="3.991"/>
+					<ellipse cx="61.713" cy="47.096" fill="#503932" stroke="#503932" stroke-width=".5" rx="3.981" ry="3.991"/>
+					<ellipse cx="21.102" cy="47.096" fill="#503932" stroke="#503932" stroke-width=".5" rx="3.981" ry="3.991"/>
+					<path fill="#FF8327" stroke="#503932" stroke-width="3.2" d="M34.052 62.34l3.332 3.145a6.8 6.8 0 0 0 9.287.044l3.435-3.18a1.2 1.2 0 0 0-.815-2.081H34.876a1.2 1.2 0 0 0-.824 2.072z"/>
+					<path fill="#FF8327" stroke="#503932" stroke-width="3.2" d="M30.152 55.713l8.957-6.376a3.6 3.6 0 0 1 3.965-.138l10.48 6.406a2.8 2.8 0 0 1-1.46 5.189H31.775a2.8 2.8 0 0 1-1.623-5.081z"/>
+					<path fill="#503932" stroke="#503932" stroke-width="3.2" d="M36.043 63.937l3.332 3.144a6.8 6.8 0 0 0 9.286.044l3.436-3.18a1.2 1.2 0 0 0-.815-2.081H36.866a1.2 1.2 0 0 0-.823 2.073z" opacity=".166"/>
+					<path fill="#503932" stroke="#503932" stroke-width="3.2" d="M32.142 57.31l8.958-6.376a3.6 3.6 0 0 1 3.965-.139l10.48 6.406a2.8 2.8 0 0 1-1.46 5.19h-20.32a2.8 2.8 0 0 1-1.623-5.082z" opacity=".166"/>
+				</g>
+				</svg>		
+			</div>	
+			<div class="join-container">
+				<header class="join-header">
+					<h1><i class="fas fa-smile"></i> HELLO WORLD</h1>
+				</header>
+				<main class="join-main">
+					<form action="chat.html">
+						<div class="form-control">
+							<label for="username">Username</label>
+							<input
+								type="text"
+								name="username"
+								id="username"
+								placeholder="Enter username..."
+								required
+							/>
+						</div>
+						<div class="form-control">
+							<label for="room">Room</label>
+							<select name="room" id="room">
+								<option id="1" value="JavaScript">JavaScript</option>
+								<option id="2" value="Python">Python</option>
+								<option id="3" value="PHP">PHP</option>
+								<option id="4" value="C#">C#</option>
+								<option id="5" value="Ruby">Ruby</option>
+								<option id="6" value="Java">Java</option>
+							</select>
+						</div>
+						<button type="submit" class="btn">Join Chat</button>
+					</form>
+				</main>
+			</div>
+		</div>
+		<script>
+			  fetch(`http://localhost:3000/`)
+    .then((res) => {
+        return res.json(); //Promise 반환
+    })
+    .then((json) => {
+        console.log(json); // 서버에서 주는 json데이터가 출력 됨
+    });
+		</script>	
+	</body>
+</html>

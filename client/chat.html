@@ -1,0 +1,114 @@
+<!doctype html>
+<html> 
+  <head>
+  <!-- <link rel="preload" href="source/font/Gilroy-Bold.woff2" as="font"> -->
+  <link href="https://fonts.googleapis.com/css?family=Nanum+Gothic:400" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css"
+/>
+  <link rel="stylesheet" href="style/style.css" />
+	<title>socket.IO chat</title> 
+  </head>
+  <body>
+   <div class="warraper">
+    <nav class="main-head">
+      <div class='head-logo'><svg width="119" height="123" fill="none" xmlns="http://www.w3.org/2000/svg"><g filter="url(#filter0_dd)"><path d="M53.23 82c4.54 0 8.226-3.733 8.226-8.333v-8.334H53.23c-4.541 0-8.226 3.734-8.226 8.334S48.689 82 53.23 82z" fill="url(#paint0_linear)"/><path d="M60.306 73.667c0 3.979-3.184 7.183-7.076 7.183-3.892 0-7.076-3.204-7.076-7.183 0-3.98 3.184-7.184 7.076-7.184h7.076v7.184z" stroke="url(#paint1_linear)" stroke-width="2.3"/></g><g filter="url(#filter1_dd)"><path d="M45.005 40.333c0-4.6 3.685-8.333 8.226-8.333h8.226v16.667H53.23c-4.541 0-8.227-3.734-8.227-8.334z" fill="url(#paint2_linear)"/><path d="M46.154 40.333c0-3.979 3.185-7.183 7.077-7.183h7.076v14.367H53.23c-3.892 0-7.077-3.205-7.077-7.184z" stroke="url(#paint3_linear)" stroke-width="2.3"/></g><g filter="url(#filter2_dd)"><path d="M61.456 32h8.226c4.54 0 8.226 3.733 8.226 8.333s-3.685 8.334-8.226 8.334h-8.226V32z" fill="url(#paint4_linear)"/><path d="M62.606 33.15h7.076c3.892 0 7.076 3.204 7.076 7.183 0 3.98-3.184 7.184-7.076 7.184h-7.076V33.15z" stroke="url(#paint5_linear)" stroke-width="2.3"/></g><g filter="url(#filter3_dd)"><path d="M77.908 57c0 4.6-3.685 8.333-8.226 8.333S61.456 61.6 61.456 57s3.685-8.333 8.226-8.333c4.54 0 8.226 3.733 8.226 8.333z" fill="url(#paint6_linear)"/><path d="M76.758 57c0 3.979-3.184 7.183-7.076 7.183-3.892 0-7.076-3.204-7.076-7.183 0-3.979 3.184-7.183 7.076-7.183 3.892 0 7.076 3.204 7.076 7.183z" stroke="url(#paint7_linear)" stroke-width="2.3"/></g><g filter="url(#filter4_dd)"><path d="M45.004 57c0-4.6 3.685-8.333 8.226-8.333h8.226v16.666H53.23c-4.541 0-8.226-3.733-8.226-8.333z" fill="url(#paint8_linear)"/><path d="M46.154 57c0-3.979 3.184-7.183 7.076-7.183h7.076v14.366H53.23c-3.892 0-7.076-3.204-7.076-7.183z" stroke="url(#paint9_linear)" stroke-width="2.3"/></g><defs><linearGradient id="paint0_linear" x1="43.554" y1="76.572" x2="69.356" y2="66.833" gradientUnits="userSpaceOnUse"><stop stop-color="#58E967"/><stop offset="1" stop-color="#0EB75C"/></linearGradient><linearGradient id="paint1_linear" x1="44.373" y1="79.829" x2="61.541" y2="78.969" gradientUnits="userSpaceOnUse"><stop stop-color="#fff"/><stop offset="1" stop-color="#07BB4A"/></linearGradient><linearGradient id="paint2_linear" x1="43.555" y1="43.239" x2="69.358" y2="33.5" gradientUnits="userSpaceOnUse"><stop stop-color="#EE4545"/><stop offset="1" stop-color="#D21616"/></linearGradient><linearGradient id="paint3_linear" x1="44.374" y1="46.495" x2="61.542" y2="45.636" gradientUnits="userSpaceOnUse"><stop stop-color="#fff"/><stop offset="1" stop-color="#DD1D1D"/></linearGradient><linearGradient id="paint4_linear" x1="60.006" y1="43.239" x2="85.809" y2="33.5" gradientUnits="userSpaceOnUse"><stop stop-color="#FA8787"/><stop offset="1" stop-color="#E35050"/></linearGradient><linearGradient id="paint5_linear" x1="32.591" y1="41.14" x2="77.18" y2="48.409" gradientUnits="userSpaceOnUse"><stop stop-color="#fff"/><stop offset="1" stop-color="#EE4E4E"/></linearGradient><linearGradient id="paint6_linear" x1="60.006" y1="59.906" x2="85.809" y2="50.167" gradientUnits="userSpaceOnUse"><stop stop-color="#75D9F8"/><stop offset="1" stop-color="#0AB1E6"/></linearGradient><linearGradient id="paint7_linear" x1="60.825" y1="63.162" x2="77.993" y2="62.303" gradientUnits="userSpaceOnUse"><stop stop-color="#fff"/><stop offset="1" stop-color="#0AAACD"/></linearGradient><linearGradient id="paint8_linear" x1="43.554" y1="59.906" x2="69.356" y2="50.167" gradientUnits="userSpaceOnUse"><stop stop-color="#AF75F8"/><stop offset="1" stop-color="#500AE6"/></linearGradient><linearGradient id="paint9_linear" x1="44.373" y1="63.162" x2="61.541" y2="62.303" gradientUnits="userSpaceOnUse"><stop stop-color="#fff"/><stop offset="1" stop-color="#770ACD"/></linearGradient><filter id="filter0_dd" x=".21" y="20.54" width="101.967" height="102.181" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/><feOffset dx="8.144" dy="8.144"/><feGaussianBlur stdDeviation="16.288"/><feColorMatrix values="0 0 0 0 0.211765 0 0 0 0 0.815686 0 0 0 0 0.388235 0 0 0 0.5 0"/><feBlend in2="BackgroundImageFix" result="effect1_dropShadow"/><feColorMatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/><feOffset dx="-12.216" dy="-12.216"/><feGaussianBlur stdDeviation="16.288"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.3 0"/><feBlend in2="effect1_dropShadow" result="effect2_dropShadow"/><feBlend in="SourceGraphic" in2="effect2_dropShadow" result="shape"/></filter><filter id="filter1_dd" x=".211" y="-12.793" width="101.967" height="102.181" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/><feOffset dx="8.144" dy="8.144"/><feGaussianBlur stdDeviation="16.288"/><feColorMatrix values="0 0 0 0 0.958333 0 0 0 0 0 0 0 0 0 0 0 0 0 0.32 0"/><feBlend in2="BackgroundImageFix" result="effect1_dropShadow"/><feColorMatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/><feOffset dx="-12.216" dy="-12.216"/><feGaussianBlur stdDeviation="16.288"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.3 0"/><feBlend in2="effect1_dropShadow" result="effect2_dropShadow"/><feBlend in="SourceGraphic" in2="effect2_dropShadow" result="shape"/></filter><filter id="filter2_dd" x="16.662" y="-12.793" width="101.967" height="102.181" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/><feOffset dx="8.144" dy="8.144"/><feGaussianBlur stdDeviation="16.288"/><feColorMatrix values="0 0 0 0 0.983333 0 0 0 0 0.278611 0 0 0 0 0.278611 0 0 0 0.32 0"/><feBlend in2="BackgroundImageFix" result="effect1_dropShadow"/><feColorMatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/><feOffset dx="-12.216" dy="-12.216"/><feGaussianBlur stdDeviation="16.288"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.3 0"/><feBlend in2="effect1_dropShadow" result="effect2_dropShadow"/><feBlend in="SourceGraphic" in2="effect2_dropShadow" result="shape"/></filter><filter id="filter3_dd" x="16.662" y="3.873" width="101.967" height="102.181" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/><feOffset dx="8.144" dy="8.144"/><feGaussianBlur stdDeviation="16.288"/><feColorMatrix values="0 0 0 0 0 0 0 0 0 0.728333 0 0 0 0 0.958333 0 0 0 0.32 0"/><feBlend in2="BackgroundImageFix" result="effect1_dropShadow"/><feColorMatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/><feOffset dx="-12.216" dy="-12.216"/><feGaussianBlur stdDeviation="16.288"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.3 0"/><feBlend in2="effect1_dropShadow" result="effect2_dropShadow"/><feBlend in="SourceGraphic" in2="effect2_dropShadow" result="shape"/></filter><filter id="filter4_dd" x=".21" y="3.873" width="101.967" height="102.181" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/><feOffset dx="8.144" dy="8.144"/><feGaussianBlur stdDeviation="16.288"/><feColorMatrix values="0 0 0 0 0.594167 0 0 0 0 0 0 0 0 0 0.958333 0 0 0 0.32 0"/><feBlend in2="BackgroundImageFix" result="effect1_dropShadow"/><feColorMatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/><feOffset dx="-12.216" dy="-12.216"/><feGaussianBlur stdDeviation="16.288"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.3 0"/><feBlend in2="effect1_dropShadow" result="effect2_dropShadow"/><feBlend in="SourceGraphic" in2="effect2_dropShadow" result="shape"/></filter></defs></svg>
+      </div>
+      <div class="head-home">home</div>
+      <div class="head-menu">menu</div>
+      <div class="head-site">site</div>
+      <div class="head-contact">contact</div>
+    </nav>
+    <div class="chat-container" style="visibility:visible;" id="chatgrid">
+        <header class="chat-header">
+          <!-- <h1><i class="fas fa-smile"></i> Dalmuti</h1> -->
+          <!-- <a href="index.html" class="btn">Leave Room</a> -->
+        </header>
+        <main class="chat-main">
+        
+          <div class="chat-messages">
+            <!--<div class='message'></div> -->
+          </div>
+        </main>
+        <div class="chat-form-container">
+          <form id="chat-form">
+            <input
+              id="msg"
+              type="text"
+              placeholder="Enter Message"
+              required
+              autocomplete="off"
+            />
+            <button class="btn"><i class="fas fa-paper-plane"></i></button>
+          </form>
+        </div>
+      </div> 
+
+      <nav class="main-nav">
+        <div class='main-nav-btn'></div>       
+        <div class='btn' id="user-btn"><i class="fas fa-users"></i></div> 
+        <div class="chat-sidebar">
+          <h3><i class="fas fa-comments"></i> Room</h3>
+          <h2 id="room-name"></h2>
+          <h3><i class="fas fa-users"></i> Users</h3>
+          <ul id="users"></ul>
+        </div>      
+        <div class='btn' id="rank-btn"><i class="fas fa-trophy"></i></div>
+        <div class="chat-ranking">
+          <h3><i class="fas fa-chart-bar"></i> Ranking</h3>
+          <ul id="rank-content"></ul>
+        </div>
+        <div class='btn' onclick="togglechat('chatgrid');"><i class="far fa-comment"></i></div>
+        <div class='btn'><i class="fab fa-instagram"></i></div>
+        <div class='btn'><i class="fas fa-question"></i></div>
+        <div class='btn' onclick="location.href='index.html';"><i class="fas fa-sign-out-alt"></i></div>
+        <div class='main-nav-btn'></div> 
+      </nav>
+     
+      <div class="game-panel">       
+        <div class="round-pan">
+          <div class="slot-2"></div>                     
+          <div class="slot-6"></div>                    
+          <div class="slot-3"></div>
+          <div class="slot-7"></div>
+          <div class="center-table">
+            <div class='game-panel-notice'></div>
+            <div class='game-panel-allcard'></div>
+           
+          </div>
+          <div class="slot-4"></div>                     
+          <div class="slot-1"></div>               
+          <div class="slot-5"></div>                                                                   
+        </div>
+        <div class="player-panel">
+          <div class='player-info'>
+            <div class="player-info-block">
+              <span class="local-turnmark"></span>
+              <img class="localimg" src="/source/1.svg">
+              <span id="localname">ID:</span>
+              <span class="local-score-title">Score</span>
+              <span class="localscore"></span>
+            </div>           
+          </div>
+          <button class="throw-btn" type="button"><i class="fas fa-eject"></i></button>                   
+          <button class="giveme-card" type="button">CARD</button>                      
+          <button class="game-start" type="button">START</button>                              
+          <div class='player-hand' id='real-hand'></div>
+          <div class="player-hand" id="throw-panel"></div>           
+          <button id="pass-btn"><i class="fas fa-share"></i></button>
+          <div class="progress-bar">
+            <div class="progress-bar-inner"></div>
+          </div>                  
+        </div>                                 
+      </div>                  
+      <footer class="main-foo">footer</footer>
+    </div>    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.9.4/qs.min.js" 
+            integrity="sha256-ijqLssetA1NMNjZ+w1zaUafQQLm4IW5OoM8O+4tatME=" 
+            crossorigin="anonymous">
+    </script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src= "/main.js"> </script>
+  </body>
+</html>
