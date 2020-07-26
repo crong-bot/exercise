@@ -1,12 +1,15 @@
-@import url("https://fonts.googleapis.com/css?family=Roboto&display=swap");
 .main-layout {
   display: -ms-grid;
   display: grid;
-  height: 100%;
-  width: 100vw;
-  background-color: white;
+  height: 50vh;
+  width: 55vw;
+  background-color: #42d3b1;
   -ms-grid-rows: 1fr 1fr;
       grid-template-rows: 1fr 1fr;
+  position: absolute;
+  top: 20%;
+  left: 21%;
+  border-radius: 16px;
 }
 
 .login-5 {
@@ -23,7 +26,7 @@
 }
 
 .join-container {
-  background-color: yellow;
+  height: 100%;
   padding: 30px;
   -webkit-box-align: center;
       -ms-flex-align: center;
@@ -31,6 +34,104 @@
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
+}
+
+.join-container .join-main {
+  height: 50%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.join-container .join-main .join-form {
+  height: 50%;
+  font-size: 1.5rem;
+  color: #503932;
+}
+
+.join-container .join-main .join-form .form-control {
+  font-size: 1.5rem;
+}
+
+.join-container .join-main .join-form .form-control #username {
+  background-color: #dad6bf;
+  border: none;
+  padding: 30px 0px 20px 0px;
+  -webkit-box-shadow: 0px 3px white, 0px 5px rgba(0, 0, 0, 0.16);
+          box-shadow: 0px 3px white, 0px 5px rgba(0, 0, 0, 0.16);
+  color: white;
+  background: transparent;
+  outline: none;
+  height: 30px;
+  font-family: 'Gilroy', sans-serif;
+  width: 200px;
+  -webkit-transition-property: -webkit-transform;
+  transition-property: -webkit-transform;
+  transition-property: transform;
+  transition-property: transform, -webkit-transform;
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.join-container .join-main .join-form .form-control #username::-webkit-input-placeholder {
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+}
+
+.join-container .join-main .join-form .form-control #username:-ms-input-placeholder {
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+}
+
+.join-container .join-main .join-form .form-control #username::-ms-input-placeholder {
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+}
+
+.join-container .join-main .join-form .form-control #username::placeholder {
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+}
+
+.join-container .join-main .join-form .form-control #room {
+  margin-left: 30px;
+  margin-top: 10px;
+  border: none;
+}
+
+.join-container .join-main .join-form #form-btn {
+  margin-top: 5%;
+  margin-left: 20%;
+  width: 60%;
+  height: 60%;
+  border: 2px solid #503932;
+  border-radius: 10px;
+  font-size: 1.5rem;
+  font-family: 'Gilroy', sans-serif;
+  background-color: #FFFC27;
+  -webkit-transition: -webkit-transform 0.2s ease;
+  transition: -webkit-transform 0.2s ease;
+  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, -webkit-transform 0.2s ease;
+}
+
+.join-container .join-main .join-form #form-btn:hover {
+  -webkit-transform: scale(1.2);
+          transform: scale(1.2);
+}
+
+.join-container .join-main .join-form #form-btn:focus {
+  outline: none;
 }
 
 .join-header {
@@ -43,18 +144,7 @@
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-}
-
-.join-main {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  color: #503932;
 }
 
 @font-face {
@@ -111,8 +201,6 @@
   -webkit-box-shadow: 0px 0px 5px rgba(245, 255, 252, 0.3), 0px 4px 4px rgba(0, 0, 0, 0.25);
           box-shadow: 0px 0px 5px rgba(245, 255, 252, 0.3), 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 10px;
-  -webkit-transition: 0.2s;
-  transition: 0.2s;
   padding: 1rem;
   font-family: 'Gilroy', sans-serif;
   font-style: normal;
@@ -122,20 +210,24 @@
   letter-spacing: 0.02em;
   color: #27A4AC;
   text-align: left;
+  -webkit-transition: -webkit-transform 0.2s;
+  transition: -webkit-transform 0.2s;
+  transition: transform 0.2s;
+  transition: transform 0.2s, -webkit-transform 0.2s;
 }
 
 .card:not(:first-child) {
-  margin: -2rem;
+  margin-left: -2rem;
 }
 
 .card:hover {
-  -webkit-transform: translateY(-2rem), rotate(15deg);
-          transform: translateY(-2rem), rotate(15deg);
+  -webkit-transform: translateY(-3rem) rotate(15deg);
+          transform: translateY(-3rem) rotate(15deg);
 }
 
 .card:hover ~ .card {
-  -webkit-transform: translateX(2rem);
-          transform: translateX(2rem);
+  -webkit-transform: translateX(3rem);
+          transform: translateX(3rem);
 }
 
 * {
@@ -416,6 +508,7 @@ li {
   width: 50%;
   left: 25%;
   top: 15%;
+  opacity: 1;
   border-radius: 10px;
   z-index: +1;
   font-size: 2rem;
@@ -1103,6 +1196,11 @@ li {
   font-size: 2rem;
 }
 
+.ta {
+  -webkit-animation: textani 1s ease-in-out;
+          animation: textani 1s ease-in-out;
+}
+
 @-webkit-keyframes speech {
   0% {
     -webkit-transform: scale(0);
@@ -1122,6 +1220,48 @@ li {
   100% {
     -webkit-transform: scale(1);
             transform: scale(1);
+  }
+}
+
+@-webkit-keyframes textani {
+  0% {
+    -webkit-transform: scale(0.1);
+            transform: scale(0.1);
+    -webkit-transform: translateY(-30px);
+            transform: translateY(-30px);
+  }
+  50% {
+    -webkit-transform: scale(1.5);
+            transform: scale(1.5);
+    -webkit-transform: translateY(-30px);
+            transform: translateY(-30px);
+  }
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    -webkit-transform: translateY(origin);
+            transform: translateY(origin);
+  }
+}
+
+@keyframes textani {
+  0% {
+    -webkit-transform: scale(0.1);
+            transform: scale(0.1);
+    -webkit-transform: translateY(-30px);
+            transform: translateY(-30px);
+  }
+  50% {
+    -webkit-transform: scale(1.5);
+            transform: scale(1.5);
+    -webkit-transform: translateY(-30px);
+            transform: translateY(-30px);
+  }
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    -webkit-transform: translateY(origin);
+            transform: translateY(origin);
   }
 }
 

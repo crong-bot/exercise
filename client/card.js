@@ -33,9 +33,7 @@ module.exports =class deck{
     	}
   }
   
-  shuffle(){
-  	
-   
+  shuffle(){   
     for( let c = this.deck.length -1; c >= 0; c--){
             let tempval = this.deck[c];
             let randomindex = Math.floor(Math.random() * this.deck.length);
@@ -46,39 +44,50 @@ module.exports =class deck{
         }
   }
   
-  deal_card(players){
-  	
-    
-    switch(players){
-    	
+  deal_card(players){  	   
+    switch(players){  	
       case 1: return 1; 
       case 2: return 2;
       case 3: return 3;
       case 4: 
       			for(let i=0;i< players;i++){
-            	this.dealcard.set(i,this.deck.slice(0,16))
-              this.deck.splice(0,16)
-              
+            	this.dealcard.set(i,this.deck.slice(0,2))
+              this.deck.splice(0,2)             
             }
            return this.dealcard;
-      case 5: return;
-      case 6: return;
-      case 7: return;
-      case 8: return;
-            
-    }
-   		 
-  }
-  
+      case 5: 
+            for(let i=0;i< players;i++){
+              this.dealcard.set(i,this.deck.slice(0,16))
+              this.deck.splice(0,16)        
+            }
+            return this.dealcard;
+      case 6: 
+            for(let i=0;i< players;i++){
+              this.dealcard.set(i,this.deck.slice(0,13))
+              this.deck.splice(0,13)        
+            }
+            return this.dealcard;
+      case 7: 
+            for(let i=0;i< players;i++){
+              this.dealcard.set(i,this.deck.slice(0,11))
+              this.deck.splice(0,11)        
+            }
+            return this.dealcard;
+      case 8:
+            for(let i=0;i< players;i++){
+              this.dealcard.set(i,this.deck.slice(0,10))
+              this.deck.splice(0,10)        
+            }
+            return this.dealcard;          
+    }  		 
+  }  
   cleardeck(){
    this.deck =[]
-  }
-  
+  } 
   printhand(){
   		for(let c=0; c<this.dealcard.size; c++){
         	console.log(this.dealcard[c])
- 				 }
-  
+ 				 }  
 	}	
 }
 

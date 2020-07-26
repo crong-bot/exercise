@@ -10,8 +10,7 @@ const users = require('./client/Utils/users');
 //---------------------------------------------------------
 //게임인스터스를 만든다. 게임인스턴스는 현재 룸의 유저를 받아서 저장
 class game{
-  constructor(){
-     
+  constructor(){     
     this.currentturn=0
     this._turn=0
     this.players=[]//onlysocket
@@ -19,6 +18,7 @@ class game{
     this.MAX_WAITING=40000
     this.ranking=[]
     this.playerspoint=[]
+    this.timeOut
   }
   makegameinstance(clients){
     for(let e of clients){
@@ -57,11 +57,12 @@ class game{
     Manager.games[data.room].players.splice(c,1)
   }
   //구현안함
-  makeranking(data){
-    Manager.games[data.room].playerspoint.sort((a,b)=>{
+  makeranking(){   
+   this.playerspoint.sort((a,b)=>{
       return a.score<b.score?-1:a.score>b.score?1:0
     })
-    console.log(Manager.games[data.room].playerspoint)
+    return this.playerspoint
+    //console.log(Manager.games[data.room].playerspoint)
   }
   resetscore(data){
     Manager.games[data.room].playerspoint=[]
@@ -71,7 +72,6 @@ class game{
 class manager{
   constructor(){
     this.games={}
-    this.timeOut
   }
   ingameleft(){
     //게임중에 나갔을때 로직 games.에서 유저 지우기
@@ -84,15 +84,15 @@ class manager{
     this.triggerTimeout(data);
   }
   triggerTimeout(data){
-    this.timeOut = setTimeout(()=>{
+    Manager.games[data].timeOut = setTimeout(()=>{
      this.next_turn(data);
    },60000);
   }
   //여기부분 수정해야함!
   resetTimeOut(data){
-    if(typeof this.timeOut === 'object'){
-      console.log("timeout reset");
-      clearTimeout(this.timeOut);
+    if(typeof Manager.games[data.room].timeOut === 'object'){
+      clearTimeout(Manager.games[data.room].timeOut);
+      console.log(Manager.games[data.room].timeOut);
     }
   }
   turnmodify(data){
@@ -102,25 +102,24 @@ class manager{
 //---------------------------------------------------------
 Deck = new cards();
 Manager =new manager()
+const roomcount={'JavaScript':{"count":0,"state":'ready'}}
 
 const app = express();
 const server = http.createServer(app);
 const io=socketio(server);
-//app.get('/', (req, res) => {
-//    res.sendFile(path.join(__dirname + '/client'));
-//  });
-const mylogger = function(req,res,next){
-  console.log('logger!')
-  const data = {
-    "number1": "2", 
-    "number2": "4"
-};
-  res.json(data)
-  next()
-}
 
+app.get('/chat.html',(req,res,next)=>{
+  let a=req.query.room
+   
+  if(roomcount[a]['count']>=8||roomcount[a]['state']=='ingame'){
+    res.sendFile('client/index.html' , { root : __dirname})
+  }
+  else{
+    console.log(roomcount[a])
+    next()
+  }
+})
 app.use(express.static(path.join(__dirname, 'client')));
-app.use(mylogger)
 
 const botname ='Chat Bot'
 io.on('connection',socket=>{
@@ -129,6 +128,7 @@ io.on('connection',socket=>{
       const user = userJoin(socket.id, username, room)
       //if(Manager.games[room].state=='none'&& getRoomUsers(room).length<=8){
         socket.join(user.room)
+        roomcount[room]['count']=getRoomUsers(room).length 
       //} 
       /* if(getCurrentUser(room).length>=8){
         Manager.games[room].state='full'
@@ -165,18 +165,18 @@ io.on('connection',socket=>{
       //playerspoint에 점수를 계산하기 위해 플레이어의 정보들을 가져온다.
       Manager.games[room].playerspoint.push(...data)
       const user = getCurrentUser(socket.id)//?
-      io.to(room).emit('sgame','ingame')     
+      io.to(room).emit('sgame','ingame')
+      roomcount[room]['state']='ingame'  
     })    
     //룸 이름 받으면 룸의 인원구하고 카드 나눠주기    
     socket.on('giveme',data=>{
       //var room = io.sockets.adapter.rooms[`${data}`];      
       //---룸에 있는 클라이언트 소켓아이디 리스트------------------------
+      io.to(data).emit('makerank', Manager.games[data].makeranking())
       io.of('/').in(`${data}`).clients((error, clients) => {       
         if (error) throw error;
         //덱이 0이 아니라면 클리어한다.
-        if(Deck.deck !==null){
-          Deck.cleardeck();
-        }
+        Deck.cleardeck();
         //덱 생성
         Deck.generate();
         Deck.shuffle();
@@ -231,8 +231,12 @@ io.on('connection',socket=>{
         io.to(user.room).emit('userListroomName',({
           users:getRoomUsers(user.room), room:user.room
         }))
-        io.to(user.room).emit('removeplayer', user)     
-      }               
+        io.to(user.room).emit('removeplayer', user)
+        if(getRoomUsers(user.room).length==0||Manager.games[user.room]===undefined){
+          clearTimeout(Manager.games[user.room].timeOut)
+          delete Manager.games[user.room]
+        }     
+      }                    
     })             
 })
 const PORT = process.env.PORT || 3000;

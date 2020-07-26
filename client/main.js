@@ -2,6 +2,7 @@
 
 const chatform = document.getElementById('chat-form')
 const chatMessages=document.querySelector('.chat-messages')
+const chatmain=document.querySelector('.chat-main')
 const roomname=document.getElementById('room-name')
 const userslist=document.getElementById('users')
 
@@ -17,6 +18,8 @@ const aa=document.getElementById('player-hand-card')
 const passbtn=document.querySelector('#pass-btn')
 // throw버튼 클릭시에 카드제출하고 검사하는 함수 구현
 const test=document.querySelector('.throw-btn')
+const target = document.getElementById('panel-notice-text');//게임텍스트패널
+const navranking =document.getElementById('rank-content')//nav랭킹
 
 const {username, room} =Qs.parse(location.search,{
     ignoreQueryPrefix:true
@@ -83,6 +86,14 @@ class Players{
   playerpos(){               
     //슬롯의 위치를 바꿔주면서 map으로 로컬을 제외한 플레이어를 만들고 그자리에 스폰
     const myind=league.players.findIndex(e=>e.name==username)
+    function poslogic(enemydiv,data){
+      enemydiv.innerHTML=`<span class="turn-mark"><img id="mark${data.socketid}" src="/source/turnmark.png"></span>
+          <img class="bird-img" id="img${data.socketid}" src="/source/1.svg">
+          <span class="enemy-name">ID:${data.name}</span>
+          <span class="enemy-score" id="score${data.socketid}">${data.score}</span>
+          <span class="score-title">Score</span>`
+      return enemydiv.innerHTML;     
+    }
     const newmap=league.players.filter(e=>{ 
       if(e.name!== username)return e
        })
@@ -98,11 +109,7 @@ class Players{
           enemydiv.classList.add('enemy')
           enemydiv.id=newmap[j].socketid
           s[j].appendChild(enemydiv) 
-          enemydiv.innerHTML=`<span class="turn-mark"><img id="mark${newmap[j].socketid}" src="/source/turnmark.png"></span>
-          <img class="bird-img" id="img${newmap[j].socketid}" src="/source/1.svg">
-          <span class="enemy-name">ID:${newmap[j].name}</span>
-          <span class="enemy-score" id="score${newmap[j].socketid}">${newmap[j].score}</span>
-          <span class="score-title">Score</span>`                  
+          poslogic(enemydiv,newmap[j])                 
         }
         break;        
       case 5:
@@ -116,11 +123,7 @@ class Players{
           enemydiv.classList.add('enemy')
           enemydiv.id=newmap[j].socketid
           s5[j].appendChild(enemydiv) 
-          enemydiv.innerHTML=`<span class="turn-mark"><img src="/source/turnmark.png"></span>
-          <img class="bird-img" src="/source/1.svg" >
-          <span class="enemy-name">ID:${newmap[j].name}</span>
-          <span class="enemy-score">${newmap[j].score}</span>
-          <span class="score-title">Score</span>`                  
+          poslogic(enemydiv,newmap[j])                   
         }
         break;         
       case 6:
@@ -134,11 +137,7 @@ class Players{
           enemydiv.classList.add('enemy')
           enemydiv.id=newmap[j].socketid
           s6[j].appendChild(enemydiv) 
-          enemydiv.innerHTML=`<span class="turn-mark"><img src="/source/turnmark.png"></span>
-          <img class="bird-img" src="/source/1.svg" >
-          <span class="enemy-name">ID:${newmap[j].name}</span>
-          <span class="enemy-score">${newmap[j].score}</span>
-          <span class="score-title">Score</span>`                  
+          poslogic(enemydiv,newmap[j])                
         }
         break;         
       case 7:
@@ -152,11 +151,7 @@ class Players{
           enemydiv.classList.add('enemy')
           enemydiv.id=newmap[j].socketid
           s7[j].appendChild(enemydiv) 
-          enemydiv.innerHTML=`<span class="turn-mark"><img src="/source/turnmark.png"></span>
-          <img class="bird-img" src="/source/1.svg" >
-          <span class="enemy-name">ID:${newmap[j].name}</span>
-          <span class="enemy-score">${newmap[j].score}</span>
-          <span class="score-title">Score</span>`                  
+          poslogic(enemydiv,newmap[j])                   
         }
         break;         
       case 8:
@@ -170,11 +165,7 @@ class Players{
           enemydiv.classList.add('enemy')
           enemydiv.id=newmap[j].socketid
           s8[j].appendChild(enemydiv) 
-          enemydiv.innerHTML=`<span class="turn-mark"><img src="/source/turnmark.png"></span>
-          <img class="bird-img" src="/source/1.svg" >
-          <span class="enemy-name">ID:${newmap[j].name}</span>
-          <span class="enemy-score">${newmap[j].score}</span>
-          <span class="score-title">Score</span>`                  
+          poslogic(enemydiv,newmap[j])                
         }
         break;          
     }        
@@ -182,12 +173,6 @@ class Players{
   newpos(){
     let emptyind =slots.findIndex(e=>{return e.hasChildNodes()==false})
     slots[emptyind].appendChild(enemydiv)
-  } 
-  updatescore(){
-
-  }
-  turn(){
-
   } 
 }
 //----------------------------------------------------------------------
@@ -236,7 +221,7 @@ socket.on('host',()=>{
 socket.on('message', message=>{
      outputMessage(message);     
      //scroll down
-     chatMessages.scrollTop =chatMessages.scrollHeight
+     chatmain.scrollTop =chatmain.scrollHeight
 })
 chatform.addEventListener('submit',e=>{
     e.preventDefault();
@@ -245,6 +230,9 @@ chatform.addEventListener('submit',e=>{
     //clear input
     e.target.elements.msg.value=''
     e.target.elements.msg.focus()
+})
+socket.on('makerank',data=>{
+    outranking(data)
 })
 function outputMessage(message){
     //let chatimg=document.getElementById("img"+message.id)
@@ -290,6 +278,9 @@ function outputRoomName(room){
 function outputUsers(users){
 userslist.innerHTML=`${users.map(user=>`<li>${user.username}</li>`).join(``)}`
 }
+function outranking(users){
+  navranking.innerHTML=`${users.map(user=>`<li>${user.name} ${user.score}</li>`).join(``)}`
+}
 // 
 gamestart.addEventListener('click',(e)=>{
   e.preventDefault()
@@ -301,7 +292,7 @@ gamestart.addEventListener('click',(e)=>{
 socket.on('sgame',(data)=>{  
   if(league.gamestate==='ready'){league.playerpos()}
   league.changestate(data)
-  changedomtext('.game-panel-notice','game start')
+  changedomtext(target,'game start')
 })
 //card 버튼 누르면 카드를 받고 타이머시작
 giveme.addEventListener('click',(e)=>{
@@ -375,6 +366,7 @@ function getDragAfterElement(container, y) {
 // 턴을 받았을때 실행하는 함수
 socket.on('your_turn',data=>{
   test.disabled=false
+  changedomtext(target,'your turn!')
   let ind= league.players.findIndex(i=>i.socketid==localsocket)  
   league.players[ind].turn=true
   console.log("turn info"+data)
@@ -405,13 +397,13 @@ socket.on('cardshowall',data=>{
 })
 socket.on('pointtoclient',(data)=>{
   //데이타 소켓을 찾아서 거기다 포인트를 넣기
-  console.log('mypoint is!!'+ data.point)
+  changedomtext(target,`your get ${data.point}point`)
   let a=document.querySelector("#score"+data.id)
   a.textContent=data.point
   let avatar=document.querySelector("#img"+data.id)
-  let playerinx=league.players.findIndex(e=>{e.socketid==data.id})
-  let nowscore=league.players[playerinx].score
-  nowscore=nowscore+data.point 
+  let ind= league.players.findIndex(i=>i.socketid==data.id)
+  league.players[ind].score += data.point 
+  let nowscore=league.players[ind].score 
   
   if(nowscore>15){
     avatar.src="/source/2.svg"
@@ -439,7 +431,7 @@ passbtn.addEventListener('click',(e)=>{
     socket.emit('pass', {room:room, id:localsocket})
     league.players[ind].turn=false
   }else{
-    console.log('not your turn')
+    changedomtext(target,'Not your turn')
   }
 })
 socket.on('allcardinfo',({Snum,Scount,Sroom,Sid})=>{
@@ -471,7 +463,7 @@ test.addEventListener('click',(e)=>{
     console.log('before throw'+ 'infoid:'+ infoid ,'infonum:'+ infonum ,'infocount:'+ infocount)   
     checkplayercard();    
   }else{
-    console.log('Not your turn...')
+    changedomtext(target,'Not your turn...')
   } 
 }) 
 
@@ -504,23 +496,17 @@ function checkplayercard(){
       allcardslot.appendChild(a)
     }
     socket.emit('throw',{num:mycard2[0],count:mycard.length,room:room,card:mycard,id:localsocket})
-  /*   socket.on('allcardinfo',({Snum,Scount,Sroom,Sid})=>{
-      infonum =Snum
-      infocount=Scount
-      infoid=Sid
-      console.log(Snum,Scount,Sroom,Sid)      
-    }) */
     wincheck()
     test.disabled=true 
-    console.log('0Success!' + 'infonum:' + infonum +'infocount:' + infocount)
+    changedomtext(target,'success!')
     return
   }else if(mycard.length!==infocount){
-    console.log('Check how many cards you threw')
+    changedomtext(target,'Check how many cards you threw')
     return
   }
   if(check()==false)return;
   if(Number(mycard2[0])>infonum){
-    console.log(`Check your card number. your cardnum: -${mycard2[0]}, infonum: -${infonum}`)
+    changedomtext(target,`Check your card number. your number is: ${mycard2[0]}, count: ${infonum}`)
     return
   }
   for(let a of nowthrow){
@@ -535,11 +521,10 @@ function checkplayercard(){
   }) */
   wincheck()
   test.disabled=true  
-  console.log('1Success!' + 'infonum:' + infonum +'infocount:' + infocount)
+  changedomtext(target,'success!')
 }
 function changedomtext(dom,content){
-  document.querySelector(dom)
-  .textContent=content
+  dom.textContent=content 
 }
 function getdom(dom){
   return document.querySelector(dom)
@@ -573,5 +558,23 @@ socket.on('roundend',e=>{
   league.changestate(e)
   const allcardslot=document.querySelector('.game-panel-allcard')
   allcardslot.innerHTML=''
-  changedomtext('.game-panel-notice',e)
+  changedomtext(target,e)
 })
+
+const callback=function textanimation(){
+  target.classList.toggle('ta')//text-animation
+  setTimeout(() => {
+    target.classList.toggle('ta')
+  }, 1500)};
+var observer = new MutationObserver(callback)
+var config = {
+  //attributes: true,
+  childList: true,
+  characterData: true,
+  //subtree: true || null,
+  //attributeOldValue: true || null,
+  //characterDataOldValue: true || null,
+}; // 감시할 내용 설정
+observer.observe(target, config); // 감시할 대상 등록
+
+
