@@ -686,9 +686,9 @@ li{
 	100%{ transform: scale(1)}
 }
 @keyframes textani{
-	0%{  transform: scale(0.1); transform:translateY(-30px)}
-	50%{  transform: scale(1.5); transform:translateY(-30px)}
-	100%{ transform: scale(1); transform:translateY(origin)}
+	0%{  transform: scale(0.5) translateY(-30px)}
+	25%{  transform: scale(1.5) translateY(-10px)}
+	100%{ transform: scale(1) translateY(origin)}
 }
 
 

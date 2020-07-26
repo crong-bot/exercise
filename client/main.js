@@ -6,6 +6,7 @@ const chatmain=document.querySelector('.chat-main')
 const roomname=document.getElementById('room-name')
 const userslist=document.getElementById('users')
 
+const localturnmark=document.querySelector('.local-mark')
 const localimg=document.querySelector('.localimg')
 const localname=document.querySelector('#localname')
 const localscore=document.querySelector('.localscore')
@@ -87,7 +88,7 @@ class Players{
     //슬롯의 위치를 바꿔주면서 map으로 로컬을 제외한 플레이어를 만들고 그자리에 스폰
     const myind=league.players.findIndex(e=>e.name==username)
     function poslogic(enemydiv,data){
-      enemydiv.innerHTML=`<span class="turn-mark"><img id="mark${data.socketid}" src="/source/turnmark.png"></span>
+      enemydiv.innerHTML=`<span class="turn-mark"><img id="mark${data.socketid}" style="visibility:hidden" src="/source/turnmark.png"></span>
           <img class="bird-img" id="img${data.socketid}" src="/source/1.svg">
           <span class="enemy-name">ID:${data.name}</span>
           <span class="enemy-score" id="score${data.socketid}">${data.score}</span>
@@ -192,6 +193,7 @@ socket.on('exitstmemeber',({users})=>{
      /*  const localimg=document.querySelector('.localname')
       const localname=document.querySelector('#localname')
       const localscore=document.querySelector('#localscore') */
+      localturnmark.id="mark"+localsocket
       localimg.id="img"+localsocket
       localscore.id="score"+localsocket
       localname.innerText=`ID: ${users[i].username}`
@@ -365,14 +367,17 @@ function getDragAfterElement(container, y) {
 }
 // 턴을 받았을때 실행하는 함수
 socket.on('your_turn',data=>{
-  test.disabled=false
-  changedomtext(target,'your turn!')
-  let ind= league.players.findIndex(i=>i.socketid==localsocket)  
+  let ind= league.players.findIndex(i=>i.socketid==localsocket)
+  //if(league.players[ind].turn==false)return
   league.players[ind].turn=true
+  test.disabled=false
+  //let a=document.getElementById(`mark${localsocket}`)
+  //a.style.visibility='visible'
+  changedomtext(target,'your turn!')   
   console.log("turn info"+data)
   processbar=document.querySelector(".progress-bar-inner")
   let pt=100  
-   let b=setInterval(() => {
+  let b=setInterval(() => {
      //console.log(a)
     //a--
     //paneltime.textContent=`${a}`
@@ -383,6 +388,16 @@ socket.on('your_turn',data=>{
       //paneltime.textContent='0'
       league.players[ind].turn=false}       
     }, 500);   
+})
+socket.on('showturnmark',data=>{
+  let a=document.getElementById(`mark${data}`)
+  a.style.visibility='visible'
+})
+socket.on('hiddenturnmark', data=>{
+  let a=document.getElementById(`mark${data}`)
+  let ind=league.players.findIndex(e=>e.socketid==data)
+  league.players[ind].turn==false
+  a.style.visibility='hidden'
 })
 //모든유저한테 allcardslot에 카드보이게 하기
 socket.on('cardshowall',data=>{
@@ -430,6 +445,8 @@ passbtn.addEventListener('click',(e)=>{
   if(league.players[ind].turn==true){    
     socket.emit('pass', {room:room, id:localsocket})
     league.players[ind].turn=false
+    //let a=document.querySelector("#mark"+localsocket)
+    //a.style.visibility='hidden'
   }else{
     changedomtext(target,'Not your turn')
   }
@@ -458,15 +475,12 @@ test.addEventListener('click',(e)=>{
   if(league.players[ind].turn==true){
     for(let i of nowthrow){
       mycard.push(i.textContent)
-    } 
-    //let allcard=[]
-    console.log('before throw'+ 'infoid:'+ infoid ,'infonum:'+ infonum ,'infocount:'+ infocount)   
+    }   
     checkplayercard();    
   }else{
     changedomtext(target,'Not your turn...')
   } 
 }) 
-
 //조커를 변환하고 카드확인하는 함수
 function check(){  
   if(mycard.some(e=>!isNaN(e))==false){
@@ -514,11 +528,6 @@ function checkplayercard(){
   }
   if(check()==false)return;
   socket.emit('throw',{num:mycard2[0],count:mycard.length,room:room,card:mycard,id:localsocket})
-  /* socket.on('allcardinfo',({Snum,Scount,Sroom,Sid})=>{
-    infonum=Snum
-    infocount=Scount
-    infoid=Sid  
-  }) */
   wincheck()
   test.disabled=true  
   changedomtext(target,'success!')
@@ -548,7 +557,7 @@ function wincheck(){
   socket.emit('iwin',{name:username, room:room,id:localsocket})
   let playerinx=league.players.findIndex(e=>e.socketid==localsocket)
   league.players[playerinx].finish=true
-  league.players[playerinx]._turn=false
+  league.players[playerinx].turn=false
   console.log('i win!')
   //pass버튼 비활성화
 }
@@ -558,9 +567,10 @@ socket.on('roundend',e=>{
   league.changestate(e)
   const allcardslot=document.querySelector('.game-panel-allcard')
   allcardslot.innerHTML=''
+  const realhand =document.getElementById('real-hand')
+  realhand.innerHTML=''
   changedomtext(target,e)
 })
-
 const callback=function textanimation(){
   target.classList.toggle('ta')//text-animation
   setTimeout(() => {
@@ -576,5 +586,3 @@ var config = {
   //characterDataOldValue: true || null,
 }; // 감시할 내용 설정
 observer.observe(target, config); // 감시할 대상 등록
-
-

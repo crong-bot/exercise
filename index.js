@@ -26,7 +26,7 @@ class game{
     }
   }
   //실행해봐야됨 잘되나 7/8일 과제**
-  givepoint(data){
+  givepoint(socket, data){
     let a= Manager.games[data.room].playerspoint.filter(e=>{if(e.socketid==data.id)return e}).map(e=>e.name)
     
     let index=  Manager.games[data.room].playerspoint.findIndex(e=>e.socketid==data.id)
@@ -35,8 +35,9 @@ class game{
     let b= Manager.games[data.room].ranking.findIndex(i=>i==data.name)
     let nowpoint=8-b
     console.log(nowpoint,b)//
+    console.log('ranking'+ Manager.games[data.room].ranking)
     Manager.games[data.room].playerspoint[index].score += nowpoint
-    io.in(data.room).emit('pointtoclient', {
+    socket.emit('pointtoclient', {
       point:Manager.games[data.room].playerspoint[index].score,
       id:data.id, 
       name:data.name})
@@ -45,16 +46,28 @@ class game{
     Manager.games[data.room].playerspoint[index].finish=true 
     //턴에서 빠지게  Manager.games[data.room].players 에서 빼기
    /*  let c=Manager.games[data.room].players.findIndex(e=>e==data.id)
-    Manager.games[data.room].players.splice(c,1) */ 
-    //모든 유저가 피니쉬가 트루면 게임종료
-    if(Manager.games[data.room].players.filter(e=>e.finish==false).length==1){
+    Manager.games[data.room].players.splice(c,1) */          
+  }
+  finishgame(socket,data){
+    if(Manager.games[data.room].players.length!==1){
+      return 
+    }else{
       io.in(data.room).emit('roundend','newgame')
-      Manager.resetTimeOut(data) 
-    }            
+      Manager.games[data.room].state='end'
+      clearTimeout(this.timeOut) //*    
+      let index=  Manager.games[data.room].playerspoint.findIndex(e=>e.socketid==Manager.games[data.room].players[0])
+      console.log('this is last player'+index)
+      /* socket.emit('pointtoclient', {
+        point:Manager.games[data.room].playerspoint[index].score+=1,
+        id:Manager.games[data.room].players[0], 
+        }) */
+    }   
   }
   spliceturn(data){
     let c=Manager.games[data.room].players.findIndex(e=>e==data.id)
     Manager.games[data.room].players.splice(c,1)
+    Manager.games[data.room].currentturn=c
+    console.log('this splice' + c)
   }
   //구현안함
   makeranking(){   
@@ -78,10 +91,14 @@ class manager{
   }
   next_turn(data){
     //매니저 배열의 게임인스턴스중에서 룸네임 키를 사용해서 g변수에 넣는다.
-    //Manager.games[data]   
+    //Manager.games[data]
+    if(roomcount[data]['state']!=='ingame')return   
     Manager.games[data]._turn = Manager.games[data].currentturn++ % Manager.games[data].players.length;
     io.to(Manager.games[data].players[Manager.games[data]._turn]).emit('your_turn',`your-turn!---${Manager.games[data]._turn}`);
-    this.triggerTimeout(data);
+    io.to(data).emit('showturnmark', Manager.games[data].players[Manager.games[data]._turn])
+    if(Manager.games[data].state==='ingame'){
+      this.triggerTimeout(data);
+    }   
   }
   triggerTimeout(data){
     Manager.games[data].timeOut = setTimeout(()=>{
@@ -129,11 +146,6 @@ io.on('connection',socket=>{
       //if(Manager.games[room].state=='none'&& getRoomUsers(room).length<=8){
         socket.join(user.room)
         roomcount[room]['count']=getRoomUsers(room).length 
-      //} 
-      /* if(getCurrentUser(room).length>=8){
-        Manager.games[room].state='full'
-      } */
-      //console.log('game state' + Manager.games[room].state) 
       //welcome current user
       socket.emit('message',formatMessage(botname,'welcome!'));
       //만약 유저수가 1이라면 호스트로 임명
@@ -199,12 +211,17 @@ io.on('connection',socket=>{
         Manager.next_turn(data);
       });                    
     })
-    //pass버튼 받으면 플레이어 소켓아이디로 찾아서 다음턴으로 넘기기
-    socket.on('pass',(data)=>{
-     if(Manager.games[data.room].players[Manager.games[data.room]._turn]==data.id){
+    function passturn(data){
+     // if(Manager.games[data.room].players[Manager.games[data.room]._turn]==data.id){
         Manager.resetTimeOut(data)//?
         Manager.next_turn(data.room)
-      }
+        io.to(data.room).emit('hiddenturnmark', data.id)
+        console.log('passturn sucess!!!!')
+      //} 
+    }
+    //pass버튼 받으면 플레이어 소켓아이디로 찾아서 다음턴으로 넘기기
+    socket.on('pass',(data)=>{
+        passturn(data)
     })
     //throw버튼 받으면 올카드인포 보내고 카드보이게 브로드캐스트
     socket.on('throw',({num,count,room,card,id})=>{
@@ -214,12 +231,16 @@ io.on('connection',socket=>{
     })
     //실행해봐야됨 잘되나 7/8일 과제**
     socket.on('iwin',(data)=>{
-      Manager.games[data.room].givepoint(data)
-      Manager.resetTimeOut(data)//?
-      Manager.turnmodify(data)
+      Manager.games[data.room].givepoint(socket,data)
+      console.log("current_turn"+Manager.games[data.room].currentturn)
+      passturn(data)
+      //Manager.turnmodify(data)
+      console.log("current_turn"+Manager.games[data.room].currentturn)     
       Manager.games[data.room].spliceturn(data)
       console.log("current_turn"+Manager.games[data.room].currentturn)
-      Manager.next_turn(data.room)
+      if(Manager.games[data.room].players.length==1){
+        Manager.games[data.room].finishgame(socket,data)
+      }
       io.in(data.room).emit('allcardinfo',{Snum:0, Scount:0,Sroom:data.room,Sid:0})      
     })          
     //user disconnects
@@ -233,8 +254,12 @@ io.on('connection',socket=>{
         }))
         io.to(user.room).emit('removeplayer', user)
         if(getRoomUsers(user.room).length==0||Manager.games[user.room]===undefined){
-          clearTimeout(Manager.games[user.room].timeOut)
+          //clearTimeout(Manager.games[user.room].timeOut)
+          Manager.games[user.room].state='ready'
           delete Manager.games[user.room]
+          roomcount[user.room]['state']='ready'
+          roomcount[user.room]['count']=0
+          console.log(roomcount)
         }     
       }                    
     })             
