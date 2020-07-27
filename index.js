@@ -61,10 +61,7 @@ class game{
       io.to(data.room).emit('hiddenturnmark',this.players[0])
       this.players=[]
       console.log("afterfinished currentturn"+ this.playerspoint[this.currentturn].socketid)
-      /* socket.emit('pointtoclient', {
-        point:Manager.games[data.room].playerspoint[index].score+=1,
-        id:Manager.games[data.room].players[0], 
-        }) */
+      io.in(data.room).emit('message',formatMessage(botname,'Game finish!'));  
     }   
   }
   spliceturn(data){
@@ -100,13 +97,15 @@ class manager{
     Manager.games[data]._turn = Manager.games[data].currentturn++ % Manager.games[data].players.length;
     io.to(Manager.games[data].players[Manager.games[data]._turn]).emit('your_turn',`your-turn!---${Manager.games[data]._turn}`);
     io.to(data).emit('showturnmark', Manager.games[data].players[Manager.games[data]._turn])
+    io.to(data).emit('hiddenturnmark', Manager.games[data].players[Manager.games[data].currentturn])
     if(Manager.games[data].state==='ingame'){
       this.triggerTimeout(data);
     }   
   }
   triggerTimeout(data){
     Manager.games[data].timeOut = setTimeout(()=>{
-     this.next_turn(data);
+      io.to(data).emit('hiddenturnmark', Manager.games[data].players[Manager.games[data]._turn])
+      this.next_turn(data);
    },60000);
   }
   //여기부분 수정해야함!
@@ -183,7 +182,8 @@ io.on('connection',socket=>{
       Manager.games[room].playerspoint.push(...data)
       const user = getCurrentUser(socket.id)//?
       io.to(room).emit('sgame','ingame')
-      roomcount[room]['state']='ingame'  
+      roomcount[room]['state']='ingame'
+      io.in(room).emit('message',formatMessage(botname,'Game Start!'));  
     })    
     //룸 이름 받으면 룸의 인원구하고 카드 나눠주기    
     socket.on('giveme',data=>{
