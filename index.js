@@ -37,7 +37,7 @@ class game{
     console.log(nowpoint,b)//
     console.log('ranking'+ Manager.games[data.room].ranking)
     Manager.games[data.room].playerspoint[index].score += nowpoint
-    socket.emit('pointtoclient', {
+    io.in(data.room).emit('pointtoclient', {
       point:Manager.games[data.room].playerspoint[index].score,
       id:data.id, 
       name:data.name})
@@ -55,8 +55,12 @@ class game{
       io.in(data.room).emit('roundend','newgame')
       Manager.games[data.room].state='end'
       clearTimeout(this.timeOut) //*    
-      let index=  Manager.games[data.room].playerspoint.findIndex(e=>e.socketid==Manager.games[data.room].players[0])
-      console.log('this is last player'+index)
+      //let index=  Manager.games[data.room].playerspoint.findIndex(e=>e.socketid==Manager.games[data.room].players[0])
+      //console.log('this is last player'+index)
+      this.currentturn=this.playerspoint.findIndex(e=>e.name==this.ranking[0])
+      io.to(data.room).emit('hiddenturnmark',this.players[0])
+      this.players=[]
+      console.log("afterfinished currentturn"+ this.playerspoint[this.currentturn].socketid)
       /* socket.emit('pointtoclient', {
         point:Manager.games[data.room].playerspoint[index].score+=1,
         id:Manager.games[data.room].players[0], 
@@ -92,7 +96,7 @@ class manager{
   next_turn(data){
     //매니저 배열의 게임인스턴스중에서 룸네임 키를 사용해서 g변수에 넣는다.
     //Manager.games[data]
-    if(roomcount[data]['state']!=='ingame')return   
+    //if(roomcount[data]['state']!=='ingame')return   
     Manager.games[data]._turn = Manager.games[data].currentturn++ % Manager.games[data].players.length;
     io.to(Manager.games[data].players[Manager.games[data]._turn]).emit('your_turn',`your-turn!---${Manager.games[data]._turn}`);
     io.to(data).emit('showturnmark', Manager.games[data].players[Manager.games[data]._turn])
@@ -108,6 +112,7 @@ class manager{
   //여기부분 수정해야함!
   resetTimeOut(data){
     if(typeof Manager.games[data.room].timeOut === 'object'){
+      console.log(Manager.games[data.room].timeOut);
       clearTimeout(Manager.games[data.room].timeOut);
       console.log(Manager.games[data.room].timeOut);
     }
@@ -233,10 +238,10 @@ io.on('connection',socket=>{
     socket.on('iwin',(data)=>{
       Manager.games[data.room].givepoint(socket,data)
       console.log("current_turn"+Manager.games[data.room].currentturn)
-      passturn(data)
-      //Manager.turnmodify(data)
-      console.log("current_turn"+Manager.games[data.room].currentturn)     
       Manager.games[data.room].spliceturn(data)
+      console.log("current_turn"+Manager.games[data.room].currentturn)
+      passturn(data)
+      //Manager.turnmodify(data)        
       console.log("current_turn"+Manager.games[data.room].currentturn)
       if(Manager.games[data.room].players.length==1){
         Manager.games[data.room].finishgame(socket,data)
@@ -255,7 +260,7 @@ io.on('connection',socket=>{
         io.to(user.room).emit('removeplayer', user)
         if(getRoomUsers(user.room).length==0||Manager.games[user.room]===undefined){
           //clearTimeout(Manager.games[user.room].timeOut)
-          Manager.games[user.room].state='ready'
+          //Manager.games[user.room].state='ready'
           delete Manager.games[user.room]
           roomcount[user.room]['state']='ready'
           roomcount[user.room]['count']=0

@@ -260,12 +260,13 @@ li{
 				height: 110%;
 				background: #F0F0F3;
 				box-shadow: 10px 10px 25px rgba(174, 174, 192, 0.4), -10px -10px 25px #ffffff;
-				border-radius: 181.5px;				
-				.card{
+				border-radius: 181.5px;	
+				pointer-events: none;			
+			/* 	.card{
 					border:1px black;
 					width: 80px;
 					height: 120px;					
-				}
+				} */
 			}
 		} 
 		.slot-2{
@@ -678,17 +679,18 @@ li{
 }
 
 .ta{
-	animation: textani 1s ease-in-out;
+	animation: tt 1s ease-in-out;
+	animation: speech 0.2s cubic-bezier(0,1.38,1,1.1);
 }
 
 @keyframes speech{
 	0%{ transform: scale(0)}
 	100%{ transform: scale(1)}
 }
-@keyframes textani{
-	0%{  transform: scale(0.5) translateY(-30px)}
-	25%{  transform: scale(1.5) translateY(-10px)}
-	100%{ transform: scale(1) translateY(origin)}
+@keyframes tt{
+	25% { transform: skewX(15deg); }
+    50% { transform: skewX(0deg) translateX(60px); }
+    75% { transform: skewX(15deg); }
 }
 
 

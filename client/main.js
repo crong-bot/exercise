@@ -281,7 +281,7 @@ function outputUsers(users){
 userslist.innerHTML=`${users.map(user=>`<li>${user.username}</li>`).join(``)}`
 }
 function outranking(users){
-  navranking.innerHTML=`${users.map(user=>`<li>${user.name} ${user.score}</li>`).join(``)}`
+  navranking.innerHTML=`${users.map(user=>`<li>${user.name} score:${user.score}</li>`).join(``)}`
 }
 // 
 gamestart.addEventListener('click',(e)=>{
@@ -385,7 +385,7 @@ socket.on('your_turn',data=>{
     pt=pt-0.84
     if(pt==0||league.players[ind].turn==false){
       clearInterval(b)
-      //paneltime.textContent='0'
+      processbar.style.width='0%'
       league.players[ind].turn=false}       
     }, 500);   
 })
@@ -402,6 +402,7 @@ socket.on('hiddenturnmark', data=>{
 //모든유저한테 allcardslot에 카드보이게 하기
 socket.on('cardshowall',data=>{
   const allcardslot=document.querySelector('.game-panel-allcard')
+  allcardslot.innerHTML=""
   for(let i=0;i<data.length;i++){        
     const aa = document.createElement('div')
     aa.classList.add('card')
@@ -412,7 +413,7 @@ socket.on('cardshowall',data=>{
 })
 socket.on('pointtoclient',(data)=>{
   //데이타 소켓을 찾아서 거기다 포인트를 넣기
-  changedomtext(target,`your get ${data.point}point`)
+  changedomtext(target,`${data.name} get ${data.point}point`)
   let a=document.querySelector("#score"+data.id)
   a.textContent=data.point
   let avatar=document.querySelector("#img"+data.id)
@@ -465,8 +466,9 @@ let mycard2=[]//조커 숫자로 변환한 행렬 서버로 보내기 위해
 test.addEventListener('click',(e)=>{
   e.preventDefault()
   e.stopPropagation()
+  if(getdom('#throw-panel').hasChildNodes()==false)return 
+
   let ind= league.players.findIndex(i=>i.socketid==localsocket)  
-  
   const nowthrow=document.querySelectorAll('#throw-panel>div')
   const nowallcard=document.querySelectorAll('.game-panel-allcard')
   //const allcardslot=document.querySelector('.all-card')
@@ -562,20 +564,25 @@ function wincheck(){
   //pass버튼 비활성화
 }
 socket.on('roundend',e=>{
-  ondom(gamestart)
+  for(let i=0;i<league.players.length;i++){
+    league.players[i].turn=false
+  }
+  //ondom(gamestart)
   ondom(giveme)
   league.changestate(e)
   const allcardslot=document.querySelector('.game-panel-allcard')
   allcardslot.innerHTML=''
   const realhand =document.getElementById('real-hand')
   realhand.innerHTML=''
+  const throwpanel =document.getElementById('throw-panel')
+  throwpanel.innerHTML=''
   changedomtext(target,e)
 })
 const callback=function textanimation(){
   target.classList.toggle('ta')//text-animation
   setTimeout(() => {
     target.classList.toggle('ta')
-  }, 1500)};
+  }, 1000)};
 var observer = new MutationObserver(callback)
 var config = {
   //attributes: true,

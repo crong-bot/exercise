@@ -534,12 +534,12 @@ li {
   -webkit-box-shadow: 10px 10px 25px rgba(174, 174, 192, 0.4), -10px -10px 25px #ffffff;
           box-shadow: 10px 10px 25px rgba(174, 174, 192, 0.4), -10px -10px 25px #ffffff;
   border-radius: 181.5px;
-}
-
-.game-panel .round-pan .center-table .game-panel-allcard .card {
-  border: 1px black;
-  width: 80px;
-  height: 120px;
+  pointer-events: none;
+  /* 	.card{
+					border:1px black;
+					width: 80px;
+					height: 120px;					
+				} */
 }
 
 .game-panel .round-pan .slot-2 {
@@ -1197,8 +1197,10 @@ li {
 }
 
 .ta {
-  -webkit-animation: textani 1s ease-in-out;
-          animation: textani 1s ease-in-out;
+  -webkit-animation: tt 1s ease-in-out;
+          animation: tt 1s ease-in-out;
+  -webkit-animation: speech 0.2s cubic-bezier(0, 1.38, 1, 1.1);
+          animation: speech 0.2s cubic-bezier(0, 1.38, 1, 1.1);
 }
 
 @-webkit-keyframes speech {
@@ -1223,45 +1225,33 @@ li {
   }
 }
 
-@-webkit-keyframes textani {
-  0% {
-    -webkit-transform: scale(0.1);
-            transform: scale(0.1);
-    -webkit-transform: translateY(-30px);
-            transform: translateY(-30px);
+@-webkit-keyframes tt {
+  25% {
+    -webkit-transform: skewX(15deg);
+            transform: skewX(15deg);
   }
   50% {
-    -webkit-transform: scale(1.5);
-            transform: scale(1.5);
-    -webkit-transform: translateY(-30px);
-            transform: translateY(-30px);
+    -webkit-transform: skewX(0deg) translateX(60px);
+            transform: skewX(0deg) translateX(60px);
   }
-  100% {
-    -webkit-transform: scale(1);
-            transform: scale(1);
-    -webkit-transform: translateY(origin);
-            transform: translateY(origin);
+  75% {
+    -webkit-transform: skewX(15deg);
+            transform: skewX(15deg);
   }
 }
 
-@keyframes textani {
-  0% {
-    -webkit-transform: scale(0.1);
-            transform: scale(0.1);
-    -webkit-transform: translateY(-30px);
-            transform: translateY(-30px);
+@keyframes tt {
+  25% {
+    -webkit-transform: skewX(15deg);
+            transform: skewX(15deg);
   }
   50% {
-    -webkit-transform: scale(1.5);
-            transform: scale(1.5);
-    -webkit-transform: translateY(-30px);
-            transform: translateY(-30px);
+    -webkit-transform: skewX(0deg) translateX(60px);
+            transform: skewX(0deg) translateX(60px);
   }
-  100% {
-    -webkit-transform: scale(1);
-            transform: scale(1);
-    -webkit-transform: translateY(origin);
-            transform: translateY(origin);
+  75% {
+    -webkit-transform: skewX(15deg);
+            transform: skewX(15deg);
   }
 }
 
