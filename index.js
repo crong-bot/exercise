@@ -3,9 +3,9 @@ const express = require('express');
 const http = require('http')
 const socketio=require('socket.io')
 const cards = require('./client/card')
-const formatMessage =require('./client/Utils/messages');
-const {userJoin,getCurrentUser, userLeave, getRoomUsers} =require('./client/Utils/users');
-const users = require('./client/Utils/users');
+const formatMessage =require('./client/utils/messages');
+const {userJoin,getCurrentUser, userLeave, getRoomUsers} =require('./client/utils/users');
+const users = require('./client/utils/users');
 
 //---------------------------------------------------------
 //게임인스터스를 만든다. 게임인스턴스는 현재 룸의 유저를 받아서 저장
