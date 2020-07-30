@@ -1,4 +1,3 @@
-//const e = require("express")
 
 const chatform = document.getElementById('chat-form')
 const chatMessages=document.querySelector('.chat-messages')
@@ -20,6 +19,7 @@ const passbtn=document.querySelector('#pass-btn')
 // throw버튼 클릭시에 카드제출하고 검사하는 함수 구현
 const test=document.querySelector('.throw-btn')
 const target = document.getElementById('panel-notice-text');//게임텍스트패널
+const target2 = document.getElementById('panel-notice-text2')
 const navranking =document.getElementById('rank-content')//nav랭킹
 
 const {username, room} =Qs.parse(location.search,{
@@ -68,7 +68,6 @@ class Players{
     this.players=[]
     this.gamestate='ready'
   }
-  //********삭제예정!
   changestate(state){
     this.gamestate= state
   }
@@ -302,8 +301,6 @@ giveme.addEventListener('click',(e)=>{
   e.stopPropagation()
   socket.emit('giveme',room)
   offdom(giveme)
-  
-  //console.log(league.players)
 })
 //카드덱을 받아서 VALUE값 추출해서 DOM에 집어넣기
 socket.on('carddeck',(data)=>{  
@@ -320,14 +317,11 @@ function showcard(dd){
     aa.innerText = `${cardnumber[i]}`
     ab.appendChild(aa)
     aa.addEventListener('dragstart',()=>{
-      console.log('dragstart')
       setTimeout(()=>{aa.classList.add('dragging'),0})
       //setTimeout(()=>{aa.className='invisible'},0)
     })
     aa.addEventListener('dragend',()=>{
       aa.classList.remove('dragging')
-      //aa.className='card'
-      console.log('dragend')
     })    
   }
   sortable()
@@ -342,7 +336,6 @@ function sortable(){
       e.preventDefault()
       const afterElement= getDragAfterElement(throws,e.clientX)
       const dragg= document.querySelector('.dragging')
-      console.log(afterElement)
       if(afterElement==null){
         throws.appendChild(dragg)
       }else{
@@ -374,13 +367,9 @@ socket.on('your_turn',data=>{
   //let a=document.getElementById(`mark${localsocket}`)
   //a.style.visibility='visible'
   changedomtext(target,'your turn!')   
-  console.log("turn info"+data)
   processbar=document.querySelector(".progress-bar-inner")
   let pt=100  
   let b=setInterval(() => {
-     //console.log(a)
-    //a--
-    //paneltime.textContent=`${a}`
     processbar.style.width=pt+'%'
     pt=pt-0.84
     if(pt==0||league.players[ind].turn==false){
@@ -395,21 +384,23 @@ socket.on('showturnmark',data=>{
 })
 socket.on('hiddenturnmark', data=>{
   let a=document.getElementById(`mark${data}`)
-  let ind=league.players.findIndex(e=>e.socketid==data)
-  league.players[ind].turn==false
+  let hind=league.players.findIndex(e=>e.socketid==data)
+  console.log("388.ind"+hind)
+  league.players[hind].turn=false
   a.style.visibility='hidden'
 })
 //모든유저한테 allcardslot에 카드보이게 하기
-socket.on('cardshowall',data=>{
+socket.on('cardshowall',({Scard,Sname})=>{
   const allcardslot=document.querySelector('.game-panel-allcard')
   allcardslot.innerHTML=""
-  for(let i=0;i<data.length;i++){        
+  for(let i=0;i<Scard.length;i++){        
     const aa = document.createElement('div')
     aa.classList.add('card')
     aa.setAttribute('draggable','false')
-    aa.innerText = `${data[i]}`
+    aa.innerText = `${Scard[i]}`
     allcardslot.appendChild(aa)
   } 
+  target2.innerText=`${Sname}'s card`
 })
 socket.on('pointtoclient',(data)=>{
   //데이타 소켓을 찾아서 거기다 포인트를 넣기
@@ -421,20 +412,20 @@ socket.on('pointtoclient',(data)=>{
   league.players[ind].score += data.point 
   let nowscore=league.players[ind].score 
   
-  if(nowscore>15){
-    avatar.src="/source/2.svg"
-  }else if(nowscore>30){
-    avatar.src="/source/3.svg"
-  }else if(nowscore>45){
-    avatar.src="/source/4.svg"
-  }else if(nowscore>60){
-    avatar.src="/source/5.svg"
-  }else if(nowscore>75){
-    avatar.src="/source/6.svg"
-  }else if(nowscore>90){
-    avatar.src="/source/7.svg"
-  }else if(nowscore>105){
+  if(nowscore>44){
     avatar.src="/source/8.svg"
+  }else if(nowscore>38){
+    avatar.src="/source/7.svg"
+  }else if(nowscore>32){
+    avatar.src="/source/6.svg"
+  }else if(nowscore>26){
+    avatar.src="/source/5.svg"
+  }else if(nowscore>20){
+    avatar.src="/source/4.svg"
+  }else if(nowscore>14){
+    avatar.src="/source/3.svg"
+  }else if(nowscore>8){
+    avatar.src="/source/2.svg"
   }
   
 })
@@ -511,7 +502,7 @@ function checkplayercard(){
     for(let a of nowthrow){
       allcardslot.appendChild(a)
     }
-    socket.emit('throw',{num:mycard2[0],count:mycard.length,room:room,card:mycard,id:localsocket})
+    socket.emit('throw',{num:mycard2[0],count:mycard.length,room:room,card:mycard,id:localsocket, name:username})
     wincheck()
     test.disabled=true 
     changedomtext(target,'success!')
@@ -529,7 +520,7 @@ function checkplayercard(){
     allcardslot.appendChild(a)
   }
   if(check()==false)return;
-  socket.emit('throw',{num:mycard2[0],count:mycard.length,room:room,card:mycard,id:localsocket})
+  socket.emit('throw',{num:mycard2[0],count:mycard.length,room:room,card:mycard,id:localsocket, name:username})
   wincheck()
   test.disabled=true  
   changedomtext(target,'success!')
@@ -554,13 +545,11 @@ function ondom(domname){
 }
 
 function wincheck(){
-  console.log(getdom('#real-hand').hasChildNodes())
   if(getdom('#real-hand').hasChildNodes()==true||getdom('#throw-panel').hasChildNodes()==true) return; 
   socket.emit('iwin',{name:username, room:room,id:localsocket})
   let playerinx=league.players.findIndex(e=>e.socketid==localsocket)
   league.players[playerinx].finish=true
   league.players[playerinx].turn=false
-  console.log('i win!')
   //pass버튼 비활성화
 }
 socket.on('roundend',e=>{

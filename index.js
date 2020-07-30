@@ -13,12 +13,14 @@ class game{
   constructor(){     
     this.currentturn=0
     this._turn=0
-    this.players=[]//onlysocket
+    this.players=[]//onlysocket need initial
     this.state= 'none'
-    this.MAX_WAITING=40000
-    this.ranking=[]
+    this.MAX_WAITING=60000
+    this.ranking=[]//점수 주기위한 피니쉬 순서 배열 need initial
     this.playerspoint=[]
     this.timeOut
+    this.MAX_POINT=10
+    this.nowpoint=0
   }
   makegameinstance(clients){
     for(let e of clients){
@@ -31,17 +33,13 @@ class game{
     
     let index=  Manager.games[data.room].playerspoint.findIndex(e=>e.socketid==data.id)
     Manager.games[data.room].ranking.push(a)
-    console.log('acess a?'+ a)
     let b= Manager.games[data.room].ranking.findIndex(i=>i==data.name)
-    let nowpoint=8-b
-    console.log(nowpoint,b)//
-    console.log('ranking'+ Manager.games[data.room].ranking)
-    Manager.games[data.room].playerspoint[index].score += nowpoint
+    this.nowpoint=this.MAX_POINT-b
+    Manager.games[data.room].playerspoint[index].score += this.nowpoint
     io.in(data.room).emit('pointtoclient', {
       point:Manager.games[data.room].playerspoint[index].score,
       id:data.id, 
       name:data.name})
-      console.log('this is givepoint data id '+ data.id +  data.name)
     //턴이 끝난 유저 피니쉬를 트루로 바꿔준다.
     Manager.games[data.room].playerspoint[index].finish=true 
     //턴에서 빠지게  Manager.games[data.room].players 에서 빼기
@@ -51,8 +49,12 @@ class game{
   finishgame(socket,data){
     if(Manager.games[data.room].players.length!==1){
       return 
-    }else{
-      io.in(data.room).emit('roundend','newgame')
+    }else{     
+      io.in(data.room).emit('pointtoclient', {
+        point:this.nowpoint-2,
+        id:this.players[0], 
+        name:'loser'})
+      io.in(data.room).emit('roundend','newgame')     
       Manager.games[data.room].state='end'
       clearTimeout(this.timeOut) //*    
       //let index=  Manager.games[data.room].playerspoint.findIndex(e=>e.socketid==Manager.games[data.room].players[0])
@@ -60,7 +62,8 @@ class game{
       this.currentturn=this.playerspoint.findIndex(e=>e.name==this.ranking[0])
       io.to(data.room).emit('hiddenturnmark',this.players[0])
       this.players=[]
-      console.log("afterfinished currentturn"+ this.playerspoint[this.currentturn].socketid)
+      Manager.games[data.room].ranking=[]
+      Manager.games[data.room].MAX_POINT=10
       io.in(data.room).emit('message',formatMessage(botname,'Game finish!'));  
     }   
   }
@@ -76,7 +79,6 @@ class game{
       return a.score<b.score?-1:a.score>b.score?1:0
     })
     return this.playerspoint
-    //console.log(Manager.games[data.room].playerspoint)
   }
   resetscore(data){
     Manager.games[data.room].playerspoint=[]
@@ -97,13 +99,14 @@ class manager{
     Manager.games[data]._turn = Manager.games[data].currentturn++ % Manager.games[data].players.length;
     io.to(Manager.games[data].players[Manager.games[data]._turn]).emit('your_turn',`your-turn!---${Manager.games[data]._turn}`);
     io.to(data).emit('showturnmark', Manager.games[data].players[Manager.games[data]._turn])
-    io.to(data).emit('hiddenturnmark', Manager.games[data].players[Manager.games[data].currentturn])
+    //io.to(data).emit('hiddenturnmark', Manager.games[data].players[Manager.games[data].currentturn% Manager.games[data].players.length])
     if(Manager.games[data].state==='ingame'){
       this.triggerTimeout(data);
     }   
   }
   triggerTimeout(data){
     Manager.games[data].timeOut = setTimeout(()=>{
+      if(Manager.games[data]==undefined)return
       io.to(data).emit('hiddenturnmark', Manager.games[data].players[Manager.games[data]._turn])
       this.next_turn(data);
    },60000);
@@ -111,9 +114,7 @@ class manager{
   //여기부분 수정해야함!
   resetTimeOut(data){
     if(typeof Manager.games[data.room].timeOut === 'object'){
-      console.log(Manager.games[data.room].timeOut);
       clearTimeout(Manager.games[data.room].timeOut);
-      console.log(Manager.games[data.room].timeOut);
     }
   }
   turnmodify(data){
@@ -189,6 +190,7 @@ io.on('connection',socket=>{
     socket.on('giveme',data=>{
       //var room = io.sockets.adapter.rooms[`${data}`];      
       //---룸에 있는 클라이언트 소켓아이디 리스트------------------------
+      console.log('before makerank'+Manager.games[data])
       io.to(data).emit('makerank', Manager.games[data].makeranking())
       io.of('/').in(`${data}`).clients((error, clients) => {       
         if (error) throw error;
@@ -212,37 +214,29 @@ io.on('connection',socket=>{
         //Manager.games[data] =new game()        
         //새로운 게임인스턴의 메소드를 사용해 소켓들을 배열에 집어넣음
         Manager.games[data].makegameinstance(clients)
-        console.log(Manager.games)
         Manager.next_turn(data);
       });                    
     })
     function passturn(data){
-     // if(Manager.games[data.room].players[Manager.games[data.room]._turn]==data.id){
         Manager.resetTimeOut(data)//?
         Manager.next_turn(data.room)
         io.to(data.room).emit('hiddenturnmark', data.id)
-        console.log('passturn sucess!!!!')
-      //} 
     }
     //pass버튼 받으면 플레이어 소켓아이디로 찾아서 다음턴으로 넘기기
     socket.on('pass',(data)=>{
         passturn(data)
     })
     //throw버튼 받으면 올카드인포 보내고 카드보이게 브로드캐스트
-    socket.on('throw',({num,count,room,card,id})=>{
+    socket.on('throw',({num,count,room,card,id,name})=>{
       io.to(room).emit('allcardinfo',{Snum:num, Scount:count,Sroom:room,Sid:id})
-      socket.to(room).emit('cardshowall', card)
+      socket.to(room).emit('cardshowall', {Scard:card,Sname:name})
       console.log(num,count,room)      
     })
     //실행해봐야됨 잘되나 7/8일 과제**
     socket.on('iwin',(data)=>{
       Manager.games[data.room].givepoint(socket,data)
-      console.log("current_turn"+Manager.games[data.room].currentturn)
       Manager.games[data.room].spliceturn(data)
-      console.log("current_turn"+Manager.games[data.room].currentturn)
       passturn(data)
-      //Manager.turnmodify(data)        
-      console.log("current_turn"+Manager.games[data.room].currentturn)
       if(Manager.games[data.room].players.length==1){
         Manager.games[data.room].finishgame(socket,data)
       }
@@ -264,7 +258,7 @@ io.on('connection',socket=>{
           delete Manager.games[user.room]
           roomcount[user.room]['state']='ready'
           roomcount[user.room]['count']=0
-          console.log(roomcount)
+          console.log(Manager.games)
         }     
       }                    
     })             

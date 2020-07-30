@@ -185,7 +185,7 @@
   border: none;
 }
 
-.main-head, .game-panel .round-pan .center-table .game-panel-notice {
+.main-head, .game-panel .round-pan .center-table .game-panel-notice, .game-panel .round-pan .center-table #panel-notice-text2 {
   font-family: 'Gilroy';
   font-weight: 800;
   font-size: 30px;
@@ -511,8 +511,26 @@ li {
   opacity: 1;
   border-radius: 10px;
   z-index: +1;
-  font-size: 2rem;
+  font-size: 3rem;
   color: #70E8BD;
+}
+
+.game-panel .round-pan .center-table #panel-notice-text2 {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  position: absolute;
+  height: 10%;
+  width: 25%;
+  left: 40%;
+  bottom: 55%;
+  border-radius: 10px;
+  z-index: +1;
+  font-size: 1rem;
+  color: #7386a7;
 }
 
 .game-panel .round-pan .center-table .game-panel-allcard {

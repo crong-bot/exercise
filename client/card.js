@@ -51,8 +51,8 @@ module.exports =class deck{
       case 3: return 3;
       case 4: 
       			for(let i=0;i< players;i++){
-            	this.dealcard.set(i,this.deck.slice(0,20))
-              this.deck.splice(0,20)             
+            	this.dealcard.set(i,this.deck.slice(0,2))
+              this.deck.splice(0,2)             
             }
            return this.dealcard;
       case 5: 

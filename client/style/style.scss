@@ -245,9 +245,26 @@ li{
 				border-radius: 10px;
 				z-index: +1;
 				@extend %text-head;
-				font-size: 2rem;
+				font-size: 3rem;
 				color: #70E8BD
 				
+			}
+			#panel-notice-text2{
+				display: flex;
+				justify-content: center;
+				position: absolute;
+				height: 10%;
+				width: 25%;
+				left:40%;
+				bottom:55%;
+				//opacity:1;
+				//background-color:#b5b5ca;
+				//opacity: 60%;
+				border-radius: 10px;
+				z-index: +1;
+				@extend %text-head;
+				font-size: 1rem;
+				color: #7386a7;
 			}
 			.game-panel-allcard{
 				position: absolute;
