@@ -53,13 +53,13 @@ class game{
       io.in(data.room).emit('pointtoclient', {
         point:this.nowpoint-2,
         id:this.players[0], 
-        name:'loser'})
-      io.in(data.room).emit('roundend','newgame')     
+        name:'loser'})  
+      this.currentturn=this.playerspoint.findIndex(e=>e.name==this.ranking[0])
+      let nowdalmuti=this.playerspoint[this.currentturn].socketid
+      io.in(data.room).emit('roundend',{e:'newgame',d:nowdalmuti, p:this.players[0]})     
       Manager.games[data.room].state='end'
       clearTimeout(this.timeOut) //*    
-      //let index=  Manager.games[data.room].playerspoint.findIndex(e=>e.socketid==Manager.games[data.room].players[0])
-      //console.log('this is last player'+index)
-      this.currentturn=this.playerspoint.findIndex(e=>e.name==this.ranking[0])
+      
       io.to(data.room).emit('hiddenturnmark',this.players[0])
       this.players=[]
       Manager.games[data.room].ranking=[]
@@ -75,10 +75,10 @@ class game{
   }
   //구현안함
   makeranking(){   
-   this.playerspoint.sort((a,b)=>{
-      return a.score<b.score?-1:a.score>b.score?1:0
+   let temp=this.playerspoint.slice().sort((a,b)=>{
+      return a.score<b.score?1:a.score>b.score?-1:0
     })
-    return this.playerspoint
+    return temp
   }
   resetscore(data){
     Manager.games[data.room].playerspoint=[]
@@ -190,8 +190,8 @@ io.on('connection',socket=>{
     socket.on('giveme',data=>{
       //var room = io.sockets.adapter.rooms[`${data}`];      
       //---룸에 있는 클라이언트 소켓아이디 리스트------------------------
-      console.log('before makerank'+Manager.games[data])
-      io.to(data).emit('makerank', Manager.games[data].makeranking())
+      //console.log('before makerank'+Manager.games[data])
+      //io.to(data).emit('makerank', Manager.games[data].makeranking())
       io.of('/').in(`${data}`).clients((error, clients) => {       
         if (error) throw error;
         //덱이 0이 아니라면 클리어한다.
@@ -238,6 +238,7 @@ io.on('connection',socket=>{
       Manager.games[data.room].spliceturn(data)
       passturn(data)
       if(Manager.games[data.room].players.length==1){
+        io.to(data.room).emit('makerank', Manager.games[data.room].makeranking())
         Manager.games[data.room].finishgame(socket,data)
       }
       io.in(data.room).emit('allcardinfo',{Snum:0, Scount:0,Sroom:data.room,Sid:0})      

@@ -67,6 +67,7 @@ class Players{
   constructor(){
     this.players=[]
     this.gamestate='ready'
+    this.gameinfo={'Host':0,'Rank1':0,'Rank-Last':0,'Dalmuti':0,'Peasant':0}
   }
   changestate(state){
     this.gamestate= state
@@ -174,6 +175,9 @@ class Players{
     let emptyind =slots.findIndex(e=>{return e.hasChildNodes()==false})
     slots[emptyind].appendChild(enemydiv)
   } 
+  findgameinfo(data){
+    this.gameinfo
+  }
 }
 //----------------------------------------------------------------------
 const league=  new Players()
@@ -204,9 +208,15 @@ socket.on('exitstmemeber',({users})=>{
 socket.on('userListroomName',({users,room, id, name})=>{
   outputRoomName(room)
   outputUsers(users)
+  const a= document.getElementById('chat-title-user')
+  const b= document.getElementById('chat-title-room')
+  const c= users.length
+  a.innerHTML=`ALL CHAT  &nbsp;${c}`
   if(name!==undefined){
     league.newplayer(name,id)            
-    }                 
+    }
+  b.innerText=`roomid: ${room}`
+  league.gameinfo.Host=users[0].id                 
 })
 //플레이어 나갔을 때 플레이어리스트에서 지우기
 socket.on('removeplayer', data =>{
@@ -216,7 +226,6 @@ socket.on('removeplayer', data =>{
 socket.on('host',()=>{
   gamestart.hidden=false
   giveme.hidden=false
-  //호스트 dom 띄우기=>
 }) 
 //message from server      
 socket.on('message', message=>{
@@ -234,7 +243,24 @@ chatform.addEventListener('submit',e=>{
 })
 socket.on('makerank',data=>{
     outranking(data)
+    let temp=data.length-1
+    league.gameinfo.Rank1= data[0].socketid
+    league.gameinfo["Rank-Last"]= data[temp].socketid
+    //this.gameinfo={'Rank1':0,'Dalmuti':0,'Host':0,'Peasant':0,'Rank-Last':0}
 })
+function chatinfo(message,div){  
+  const ab=document.createElement('div')
+  ab.classList.add('chatinfocontainer')
+  div.appendChild(ab)
+  for(let a in league.gameinfo){
+    if(message.id==league.gameinfo[a]){
+      const span=document.createElement('span')
+      span.id=a
+      span.append(a)   
+      ab.appendChild(span) 
+    }
+  }  
+}
 function outputMessage(message){
     //let chatimg=document.getElementById("img"+message.id)
     if(message.id==undefined){
@@ -242,7 +268,7 @@ function outputMessage(message){
       div.classList.add('message')
       div.innerHTML=
       `<img class='chat-img' src="/source/chatbotimg.svg"></img>
-      <p class='meta'> ${message.username} <span>${message.time}</span></p>
+      <p class='meta'> ${message.username}<span>&nbsp;${message.time}</span></p>
       <p class='text'>
         ${message.text}
       </p>`
@@ -253,23 +279,38 @@ function outputMessage(message){
       div.classList.add('local-message')
       div.innerHTML=
       `<img class='chat-img' src="${chatimg.src}"></img>
-      <p class='meta'> ${message.username} <span>${message.time}</span></p>
+      <p class='meta'> ${message.username} <span style='color: #bbbbbb;font-size:1.3rem;'>&nbsp;&bull;${message.time}</span></p>
       <p class='text'>
         ${message.text}
       </p>`
+      chatinfo(message,div)
       document.querySelector('.chat-messages').appendChild(div)
     }else{
-      //let chatimg=document.getElementById("img"+message.id)
-      const div = document.createElement('div')
-      div.classList.add('message')
-      div.innerHTML=
-      `<img class='chat-img' src="/source/1.svg"></img>
-      <p class='meta'> ${message.username} <span>${message.time}</span></p>
-      <p class='text'>
-        ${message.text}
-      </p>`
-      document.querySelector('.chat-messages').appendChild(div)
-    }     
+      let chatimg2=document.getElementById("img"+message.id)
+      if(chatimg2!==null){
+        const div = document.createElement('div')
+        div.classList.add('message')
+        div.innerHTML=
+        `<img class='chat-img' src="${chatimg2.src}"></img>
+        <p class='meta'> ${message.username} <span style='color: #bbbbbb;font-size:1.3rem;'>&nbsp;&bull;${message.time}</span></p>
+        <p class='text'>
+          ${message.text}
+        </p>`
+        chatinfo(message,div)
+        document.querySelector('.chat-messages').appendChild(div)
+      }else{
+        const div = document.createElement('div')
+        div.classList.add('message')
+        div.innerHTML=
+        `<img class='chat-img' src="/source/1.svg"></img>
+        <p class='meta'> ${message.username} <span style='color: #bbbbbb;font-size:1.3rem;'>&nbsp;&bull;${message.time}</span></p>
+        <p class='text'>
+          ${message.text}
+        </p>`
+        chatinfo(message,div)
+        document.querySelector('.chat-messages').appendChild(div)
+      }      
+    }    
 }
 // ADD ROOM NAME TO DOM
 function outputRoomName(room){
@@ -552,20 +593,23 @@ function wincheck(){
   league.players[playerinx].turn=false
   //pass버튼 비활성화
 }
-socket.on('roundend',e=>{
+socket.on('roundend',(data)=>{
   for(let i=0;i<league.players.length;i++){
     league.players[i].turn=false
   }
   //ondom(gamestart)
   ondom(giveme)
-  league.changestate(e)
+  league.changestate(data.e)
   const allcardslot=document.querySelector('.game-panel-allcard')
   allcardslot.innerHTML=''
   const realhand =document.getElementById('real-hand')
   realhand.innerHTML=''
   const throwpanel =document.getElementById('throw-panel')
   throwpanel.innerHTML=''
-  changedomtext(target,e)
+  changedomtext(target,data.e)
+  league.gameinfo.Dalmuti= data.d
+  league.gameinfo.Peasant= data.p;
+  //this.gameinfo={'Rank1':0,'Dalmuti':0,'Host':0,'Peasant':0,'Rank-Last':0}
 })
 const callback=function textanimation(){
   target.classList.toggle('ta')//text-animation

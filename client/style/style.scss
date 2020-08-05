@@ -1,8 +1,23 @@
 @import "./_index.scss";
 @font-face {
 	font-family: 'Gilroy';
-	src: url('/source/font/Gilroy-Bold.woff2') format('woff2'),
+	src: url('/source/font/Gilroy-Bold.woff2') format('woff2');
+	letter-spacing: 0.02em;
+	line-height: 100%;
   }
+ @font-face { font-family: 'NEXON Lv1 Gothic OTF Light'; 
+	src: url('/source/font/NEXON Lv1 Gothic OTF Light.woff') format('woff'); 
+	font-weight: normal; font-style: normal;
+	letter-spacing: 0.02em;
+	line-height: 100%;
+}
+	
+@font-face { font-family: 'Gilroy-extrabold'; 
+	src: url('https://crong-bot.github.io/files/Gilroy-ExtraBold.woff2') format('woff2'); 
+	font-weight: normal; font-style: normal;
+	letter-spacing: 0.02em;
+	line-height: 100%; 
+}
 
 $dark-color-a: #667aff;
 $dark-color-b: #7386ff;
@@ -38,7 +53,7 @@ $error-color: #d9534f;
 
 //}
 %text-head{
-	font-family: 'Gilroy';
+	font-family: 'Gilroy-extrabold';
 	//font-style: normal;
 	font-weight: 800;
 	font-size: 30px;
@@ -63,6 +78,7 @@ $error-color: #d9534f;
 	color: #27A4AC;
 	text-align: left;
 	transition: transform 0.2s;
+	z-index: 1;
 }
 .card:not(:first-child){
 	margin-left: -2rem;
@@ -444,17 +460,44 @@ li{
 			grid-column: 4/6;
 			grid-row: 1/2;			
 			position: relative;
-			width: 60%;
+			display: flex;
+			align-items: center;
+			/* width: 60%;
 			height: 60%;
 			background: linear-gradient(172.18deg, #EEF1F5 4.98%, #E6E9EF 94.88%);
 			box-shadow: inset 5px 5px 10px rgba(166, 180, 200, 0.75), inset -5px -5px 15px rgba(255, 255, 255, 0.75);
-			border-radius: 40px;			
+			border-radius: 40px; */
+			width: 55%;
+				height:45%;
+				background: #F0F0F3;
+				box-shadow: -1px -1px 3px #FFFFFF, 1.5px 1.5px 3px rgba(174, 174, 192, 0.4);
+				border-radius: 12px;
+			z-index: 1;
+			&::after{
+				content:'';
+				position: absolute;
+				margin-left: 1%;
+				z-index: -1;
+				width: 98%;
+				height: 70%;
+				background: #EEEEEE;
+				box-shadow: inset -1px -1px 1px rgba(255, 255, 255, 0.7), 
+							inset 1px 1px 2px rgba(174, 174, 192, 0.2);
+				border-radius: 12px;	
+			}			
 			.progress-bar-inner{
-				width: 100%;
+				/* width: 100%;
 				height:90%;
 				background: linear-gradient(137.32deg, #70E8BD 23.49%, #66DBB1 76.7%);
 				box-shadow: inset 5px -4px 10px #53D2BB;
-				border-radius: 40px;
+				border-radius: 40px; */
+				margin-left: 2px;
+				margin-right: 2px;
+				width: 100%;
+				height: 65%;
+				background: #47DAE4;
+				box-shadow: 0px 0px 2px rgba(114, 138, 183, 0.7);
+				border-radius: 12px;
 			}		
 		}		
 		#pass-btn{
@@ -597,24 +640,57 @@ li{
 
 .chat-container{
 	display: grid;
-	grid-template-rows: 0.5fr 9fr 1fr;
+	grid-template-rows: 1fr 9fr 1fr;
 	row-gap: 1rem;
+	border-left: solid 3px #EBE9E9;
+	#chat-container-h1{
+		margin-left: 5px;
+	}
+	.chat-title{
+		font-family: 'Gilroy-extrabold';
+		font-size: 3rem;
+		font-weight: 800;
+		color: #31456a;
+		letter-spacing: 0.02em;
+	}
+	#chat-title-room{
+		font-family:'NEXON Lv1 Gothic OTF Light';
+		font-size: 1.3rem;
+		color: #7182a0;
+		padding-left:18%;
+		font-weight: normal;
+		margin-top: 1px;
+		margin-bottom: 5px;
+		letter-spacing: 0.02em;
+
+	}
+	#chat-title-user{
+		background-color: #EBE9E9;
+		font-family:'Gilroy';
+		font-weight: lighter;
+		font-size: 1rem;
+		color: #BBBBBB;
+		padding: 3px 2px 3px 6px;
+		margin-top: 10px;
+		margin-left: -5px;
+	}
 	.chat-main{
 		overflow-y: scroll;
 		padding-bottom: 10px;
 		.chat-messages{			
 			@mixin message{
 				height: auto;
-				width: 70%;
-				margin: 15px 15px 0 5px;
+				width: 90%;
+				margin: 15px 5px 1px 10px;
 				padding: 10px;
-				background: #F0F0F3;
-				border-radius: 10px;
-				box-shadow: 5px 5px 10px rgba(174, 174, 192, 0.4), -4px -4px 8px #FFFFFF;
+				background-color: white;
+				//background: #F0F0F3;
+				border-radius: 0px 34px 34px 20px;
+				//box-shadow: 5px 5px 10px rgba(174, 174, 192, 0.4), -4px -4px 8px #FFFFFF;
 				animation: speech 0.2s cubic-bezier(0,1.38,1,1.1);
 				display: grid;
 				grid-template-columns: 1fr 6fr;
-				grid-template-rows: auto 0.5fr 0.1fr;
+				grid-template-rows: auto auto 1fr;
 				column-gap: 5px;
 				/* &:before{
 					content: '';
@@ -626,39 +702,54 @@ li{
 				.chat-img{
 					grid-column: 1/2 ;
 					grid-row: 1/4;
+					overflow: visible;
 				}
 				.meta{
 					grid-column: 2/3 ;
-					grid-row: 1/2;
+					grid-row: 2/3;
+					font-family: 'NEXON Lv1 Gothic OTF Light';
 					font-size: 1.5rem;
-					font-weight: bold;
-					color: #31456A;
-					opacity: 0.7;
-					margin-bottom: 7px;
+					font-weight: normal;
+					line-height: auto;
+					color: #050505;
+					text-shadow: #050505 0px 0px 0.07px; // for black text
+					//opacity: 1;
+					margin-top: 1px;
+					margin-bottom: 5px;
+					margin-left: 3px;
 					align-self: center;
 					//justify-self: center;
 				}
 				.text{
+					font-family: 'NEXON Lv1 Gothic OTF Light';
 					font-size: 1.2rem;
-					font-weight: bold;
-					color: #55688a;
+					font-style: normal;
+					font-weight: normal;
+					letter-spacing: 0.02rem;
+					line-height: auto;
+					color: #838383;
 					word-break: break-all;
 					grid-column: 2/3 ;
-					grid-row: 2/3;
-					padding-bottom: 5px;
+					grid-row: 3/4;
+					padding-top: 5px;
 					padding-left: 5px;
+					text-shadow: #838383 0px 0px 0.07px; // for black text
+					transform: skew(-0.07deg); 
 				}
+				.chatinfocontainer{
+					grid-column: 2/3 ;
+					grid-row: 1/2;
+					padding-bottom: 1px;
+					overflow: visible;
+				}				
 			}
 			.message{
 				@include message();
+							
 			}
 			.local-message{
 				@include message();
-				background: rgb(207, 245, 245);
-				margin: 15px 10px 0 65px;
-				.text{
-					color: #686868;
-				}
+
 			}
 		}
 	}
@@ -667,9 +758,11 @@ li{
 		#chat-form{
 			position: relative;
 			display: flex;
-			margin-right: 2rem;
+			margin-right: 1rem;
+			margin-left: 1rem;
 			#msg{				
 				//position: relative;
+				font-family: 'NEXON Lv1 Gothic OTF Light';
 				font-size: 1.5rem;
 				color: #31456A;
 				//padding: 5px;
@@ -680,7 +773,7 @@ li{
 				width: 100%;
 				height: 35px;
 				margin-right: 0.5rem;		
-				padding-left: 1rem;
+				padding-left: 2rem;
 				box-shadow:
 					inset 2px 2px 4px #d1d9e6,
 					inset -2px -2px 4px #ffffff;
@@ -697,6 +790,7 @@ li{
 		}
 	}
 }
+	
 
 .ta{
 	animation: tt 1s ease-in-out;
@@ -711,6 +805,40 @@ li{
 	25% { transform: skewX(15deg); }
     50% { transform: skewX(0deg) translateX(60px); }
     75% { transform: skewX(15deg); }
+}
+%chatinfo-block{
+	padding: 2px 10px 2px 10px;
+	border-radius: 50px;
+	font-family: 'NEXON Lv1 Gothic OTF Light';
+	font-size: 1.2rem;
+	display:inline-block;
+	//position: absolute;
+}
+#Host{
+	@extend %chatinfo-block;
+	background-color: #D1ECEE;
+	color: #109EA8;
+}
+#Rank1{
+	@extend %chatinfo-block;
+	background-color: #CBB2F3;
+	color: #6036A3;
+}
+#Rank-Last{
+	@extend %chatinfo-block;
+	background-color: #c1c1c1;
+	color: #666666;
+}
+#Dalmuti{
+	@extend %chatinfo-block;
+	background-color: #FFB9B9;
+	color: #ff0000;
+}
+
+#Peasant{
+	@extend %chatinfo-block;
+	background-color: #B6C0D4;
+	color: #1D293E;
 }
 
 
