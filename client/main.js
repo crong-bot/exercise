@@ -1,4 +1,3 @@
-
 const chatform = document.getElementById('chat-form')
 const chatMessages=document.querySelector('.chat-messages')
 const chatmain=document.querySelector('.chat-main')
@@ -21,6 +20,7 @@ const test=document.querySelector('.throw-btn')
 const target = document.getElementById('panel-notice-text');//게임텍스트패널
 const target2 = document.getElementById('panel-notice-text2')
 const navranking =document.getElementById('rank-content')//nav랭킹
+const navexitbtn =document.getElementById('exitbtn')//nav나가기 버튼
 
 const {username, room} =Qs.parse(location.search,{
     ignoreQueryPrefix:true
@@ -79,9 +79,11 @@ class Players{
   }
   //디스커넥한 유저 소켓접수 인덱스찾고 소켓아이디로 돔 찾아서 지우고 리스트에서지우고
   removeplayers(data){
-    let playerinx=league.players.findIndex(e=>{e.socketid==data.id})    
+    let playerinx=league.players.findIndex(e=>e.socketid==data.id)    
     const c=document.getElementById(`${data.id}`)
-    c.parentNode.removeChild(c)
+    if(c!==null){
+      c.parentNode.removeChild(c)
+    }
     league.players.splice(playerinx, 1);
   }
   playerpos(){               
@@ -323,12 +325,17 @@ userslist.innerHTML=`${users.map(user=>`<li>${user.username}</li>`).join(``)}`
 function outranking(users){
   navranking.innerHTML=`${users.map(user=>`<li>${user.name} score:${user.score}</li>`).join(``)}`
 }
+navexitbtn.addEventListener('click',(e)=>{
+  e.preventDefault()
+  socket.emit('disconnect')
+  location.href="index.html"
+})
 // 
 gamestart.addEventListener('click',(e)=>{
   e.preventDefault()
   e.stopPropagation()
   socket.emit('startgame',{data:league.players,room:room})
-  offdom(gamestart)
+  offdom(gamestart)   
 })
 //스타트게임 메시지 서버한테 받고 게임state바꾸기('ingame'), 플레이어스폰하기
 socket.on('sgame',(data)=>{  

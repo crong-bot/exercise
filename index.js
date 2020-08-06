@@ -242,7 +242,9 @@ io.on('connection',socket=>{
         Manager.games[data.room].finishgame(socket,data)
       }
       io.in(data.room).emit('allcardinfo',{Snum:0, Scount:0,Sroom:data.room,Sid:0})      
-    })          
+    })
+    /* onclick="location.href='index.html';"  */ 
+    //socket.on()        
     //user disconnects
     socket.on('disconnect',()=>{ 
       const user= userLeave(socket.id)
