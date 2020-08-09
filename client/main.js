@@ -354,6 +354,13 @@ giveme.addEventListener('click',(e)=>{
 socket.on('carddeck',(data)=>{  
     showcard(data)
 })
+function allmarkhidden(){
+  for(let i=0;i<league.players.length;i++){
+    let temp= document.getElementById(`mark${league.players[i].socketid}`)
+    temp.style.visibility="hidden"
+    temp.src="/source/turnmark.png"
+  }
+}
 //받은 카드 배열로 카드 DOM 생성하는 함수//드래그 리스너달기
 function showcard(dd){
   const cardnumber= dd.map(e=>e.value)  
@@ -433,7 +440,6 @@ socket.on('showturnmark',data=>{
 socket.on('hiddenturnmark', data=>{
   let a=document.getElementById(`mark${data}`)
   let hind=league.players.findIndex(e=>e.socketid==data)
-  console.log("388.ind"+hind)
   league.players[hind].turn=false
   a.style.visibility='hidden'
 })
@@ -460,19 +466,19 @@ socket.on('pointtoclient',(data)=>{
   league.players[ind].score += data.point 
   let nowscore=league.players[ind].score 
   
-  if(nowscore>44){
+  if(nowscore>69){
     avatar.src="/source/8.svg"
-  }else if(nowscore>38){
+  }else if(nowscore>59){
     avatar.src="/source/7.svg"
-  }else if(nowscore>32){
+  }else if(nowscore>49){
     avatar.src="/source/6.svg"
-  }else if(nowscore>26){
+  }else if(nowscore>39){
     avatar.src="/source/5.svg"
-  }else if(nowscore>20){
+  }else if(nowscore>29){
     avatar.src="/source/4.svg"
-  }else if(nowscore>14){
+  }else if(nowscore>19){
     avatar.src="/source/3.svg"
-  }else if(nowscore>8){
+  }else if(nowscore>9){
     avatar.src="/source/2.svg"
   }
   
@@ -553,6 +559,7 @@ function checkplayercard(){
     socket.emit('throw',{num:mycard2[0],count:mycard.length,room:room,card:mycard,id:localsocket, name:username})
     wincheck()
     test.disabled=true 
+    target2.innerText=`your card`
     changedomtext(target,'success!')
     return
   }else if(mycard.length!==infocount){
@@ -561,7 +568,7 @@ function checkplayercard(){
   }
   if(check()==false)return;
   if(Number(mycard2[0])>infonum){
-    changedomtext(target,`Check your card number. your number is: ${mycard2[0]}, count: ${infonum}`)
+    changedomtext(target,`your number is: ${mycard2[0]}, NOW: ${infonum}`)
     return
   }
   for(let a of nowthrow){
@@ -570,7 +577,8 @@ function checkplayercard(){
   if(check()==false)return;
   socket.emit('throw',{num:mycard2[0],count:mycard.length,room:room,card:mycard,id:localsocket, name:username})
   wincheck()
-  test.disabled=true  
+  test.disabled=true
+  target2.innerText=`your card`  
   changedomtext(target,'success!')
 }
 function changedomtext(dom,content){
@@ -600,6 +608,11 @@ function wincheck(){
   league.players[playerinx].turn=false
   //pass버튼 비활성화
 }
+socket.on('showendmark',(data)=>{
+  let a=document.getElementById(`mark${data}`)
+  a.style.visibility='visible'
+  a.src="https://crong-bot.github.io/files/endmark.png"
+})
 socket.on('roundend',(data)=>{
   for(let i=0;i<league.players.length;i++){
     league.players[i].turn=false
@@ -616,7 +629,7 @@ socket.on('roundend',(data)=>{
   changedomtext(target,data.e)
   league.gameinfo.Dalmuti= data.d
   league.gameinfo.Peasant= data.p;
-  //this.gameinfo={'Rank1':0,'Dalmuti':0,'Host':0,'Peasant':0,'Rank-Last':0}
+  allmarkhidden()
 })
 const callback=function textanimation(){
   target.classList.toggle('ta')//text-animation

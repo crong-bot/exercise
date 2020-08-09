@@ -50,8 +50,10 @@ class game{
     if(Manager.games[data.room].players.length!==1){
       return 
     }else{     
+      let Lindex= Manager.games[data.room].playerspoint.findIndex(e=>e.socketid==this.players[0])
+      this.playerspoint[Lindex].score+=this.nowpoint-2
       io.in(data.room).emit('pointtoclient', {
-        point:this.nowpoint-2,
+        point:this.playerspoint[Lindex].score,
         id:this.players[0], 
         name:'loser'})  
       this.currentturn=this.playerspoint.findIndex(e=>e.name==this.ranking[0])
@@ -60,7 +62,7 @@ class game{
       Manager.games[data.room].state='end'
       clearTimeout(this.timeOut) //*    
       
-      io.to(data.room).emit('hiddenturnmark',this.players[0])
+      //io.to(data.room).emit('hiddenturnmark',this.players[0])
       this.players=[]
       Manager.games[data.room].ranking=[]
       Manager.games[data.room].MAX_POINT=10
@@ -237,6 +239,7 @@ io.on('connection',socket=>{
       Manager.games[data.room].givepoint(socket,data)
       Manager.games[data.room].spliceturn(data)
       passturn(data)
+      io.to(data.room).emit('showendmark', data.id)
       if(Manager.games[data.room].players.length==1){
         io.to(data.room).emit('makerank', Manager.games[data.room].makeranking())
         Manager.games[data.room].finishgame(socket,data)

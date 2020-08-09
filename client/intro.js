@@ -7,8 +7,4 @@ function login(){
         alert(room+ 'cannot enter now!')
     }
 }
-
 login()
-
-node = document.getElementById('main-svg').getBBox()
-console.log(node)
